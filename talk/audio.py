@@ -8,7 +8,7 @@ from typing import Union
 import torch
 import torch.nn.functional as F
 
-from utils import exact_div
+from .utils import exact_div
 
 # hard-coded audio hyperparameters
 SAMPLE_RATE = 16000
