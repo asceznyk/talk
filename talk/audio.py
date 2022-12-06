@@ -31,8 +31,27 @@ def load_audio(file: str, sr: int = SAMPLE_RATE):
 
     return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0 
 
+@lru_cache(maxsiz=None)
+def mel_filters(device):
+    with np.load(os.path.join(os.path.dirname(__file__), "assets", "mel_filters.npz")) as f:
+        return torch.from_numpy(f[f"mel_{N_MELS}"]).to(device)
 
+def log_mel_spec(audio: Union[str, torch.Tensor, np.ndarray]):
+    if not torch.tensor(audio):
+        if isinstance(audio, str): audio = load_audio(audio)
+        audio = torch.from_numpy(audio)
+ 
+    stft = torch.stft(
+        audio, 
+        N_FFT, 
+        HOP_LENGTH, 
+        window=torch.hann_window(N_FFT).to(audio.device),
+        return_complex=True
+    )
 
+    log_spec = torch.clamp(mel_filters(audio.device) @ (stft[:, :-1].abs() ** 2), min=1e-10).log10()
+    log_spec = torch.maximum(log_spec, log_spec.max() - 8.0)
+    return (log_spec + 4.0) / 4.0
 
 
 
