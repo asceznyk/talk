@@ -37,7 +37,7 @@ def mel_filters(device):
         return torch.from_numpy(f[f"mel_{N_MELS}"]).to(device)
 
 def log_mel_spec(audio: Union[str, torch.Tensor, np.ndarray]):
-    if not torch.tensor(audio):
+    if not torch.is_tensor(audio):
         if isinstance(audio, str): audio = load_audio(audio)
         audio = torch.from_numpy(audio)
  
