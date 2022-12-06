@@ -31,7 +31,7 @@ def load_audio(file: str, sr: int = SAMPLE_RATE):
 
     return np.frombuffer(out, np.int16).flatten().astype(np.float32) / 32768.0 
 
-@lru_cache(maxsiz=None)
+@lru_cache(maxsize=None)
 def mel_filters(device):
     with np.load(os.path.join(os.path.dirname(__file__), "assets", "mel_filters.npz")) as f:
         return torch.from_numpy(f[f"mel_{N_MELS}"]).to(device)
