@@ -24,7 +24,7 @@ def pad_or_trim(array:torch.Tensor, length:int = N_SAMPLES, *, axis:int=-1):
         array = array.index_select(dim=axis, index=torch.arange(length, device=array.device))
     elif array.shape[axis] < length:
         pad_widths = [(0,0)] * array.ndim
-        pad_widths[axis] = [(0, length - array.shape[axis])]
+        pad_widths[axis] = (0, length - array.shape[axis])
         array = F.pad(array, [pad for sizes in pad_widths[::-1] for pad in sizes])
 
     return array
