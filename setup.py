@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 setup(
     name="talk",
     py_modules=["talk"],
-    version="1.0",
+    version="1.0.0",
     description="Librarized code to test it more easily on VM",
     readme="README.md",
     python_requires=">=3.7",
