@@ -168,11 +168,10 @@ class Tokenizer:
 
 @lru_cache(maxsize=None)
 def build_tokenizer(name: str="gpt2"):
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
-    path = os.path.join(os.path.dirname(__file__), "assets", name)
-    tokenizer = GPT2TokenizerFast.from_pretrained(path)
+    os.environ["TOKENIZERS_PARALLELISM"] = "false" 
+    tokenizer = GPT2TokenizerFast.from_pretrained(os.path.join(os.path.dirname(__file__), "assets", name)) 
 
-    specials = [
+    tokenizer.add_special_tokens(dict(additional_special_tokens=[
         "<|startoftranscript|>",
         *[f"<|{lang}|>" for lang in LANGUAGES.keys()],
         "<|translate|>",
@@ -181,9 +180,7 @@ def build_tokenizer(name: str="gpt2"):
         "<|startofprev|>",
         "<|nospeech|>",
         "<|notimestamps|>",
-    ]
-
-    tokenizer.add_special_tokens(dict(additional_special_tokens=specials))
+    ]))
     return tokenizer
 
 @lru_cache(maxsize=None)
@@ -197,7 +194,7 @@ def get_tokenizer(
         language = language.lower()
         if language not in LANGUAGES:
             if language not in TO_LANGUAGE_CODE:
-                raise(f"Unsupported language {language}")
+                raise ValueError(f"Unsupported language {language}")
             language = TO_LANGUAGE_CODE[language] 
 
     task, language = None, None
