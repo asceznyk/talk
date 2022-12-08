@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 
-from transformers import GPT2TokenzierFast
+from transformers import GPT2TokenizerFast
 
 LANGUAGES = {
     "en": "english",
