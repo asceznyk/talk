@@ -186,4 +186,38 @@ def build_tokenizer(name: str="gpt2"):
     tokenizer.add_special_tokens(dict(additional_special_tokens=specials))
     return tokenizer
 
+@lru_cache(maxsize=None)
+def get_tokenizer(
+        multilingual:bool, 
+        *, 
+        task: Optional[str] = None, 
+        language: Optional[str] = None
+) -> Tokenizer:
+    if language is not None:
+        language = language.lower()
+        if language not in LANGUAGES:
+            if language not in TO_LANGUAGE_CODE:
+                raise(f"Unsupported language {language}")
+            language = TO_LANGUAGE_CODE[language] 
+
+    tokenizer_name, task, language = "gpt2", None, None
+    if multilingual:
+        tokenizer_name = "multilingual" 
+        task = task or "transcribe"
+        language = language or "en"
+
+    tokenizer = build_tokenizer(name=tokenizer_name) 
+
+    all_special_ids = tokenizer.all_special_ids 
+    transcribe = all_special_ids[-5] 
+    sot_sequence = [all_special_ids[1]]
+    if language is not None: sot_sequence.append(tokenizer.vocab[f'<|{language}|>'])
+    if task is not None: 
+        sot_sequence.append(
+            all_special_ids[-5] if task == "transcribe" else all_special_ids[-6]
+        )
+
+    return Tokenizer(tokenizer=tokenizer, language=language, sot_sequence=tuple(sot_sequence))
+
+
 
