@@ -132,6 +132,36 @@ class Tokenizer:
     language: Optional[str]
     sot_sequence: Tuple[int]
 
+    def _token_id(self, token): return self.tokenizer.vocab[token]
+
+    def encode(self, text:str, **kwargs): return self.tokenizer.encode(text, **kwargs)
+    
+    def decode(self, ids:Union[int, List[int], np.ndarray, torch.Tensor], **kwargs): return self.tokenizer.decode(ids, **kwargs)
+
+    @property
+    @lru_cache()
+    def eot(self) -> int:return self.tokenizer.eos_token_id
+
+    @property
+    @lru_cache()
+    def sot(self) -> int: return self._token_id("<|startoftranscript|>")
+
+    @property
+    @lru_cache()
+    def sot_lm(self) -> int: return self._token_id("<|startoflm|>")
+
+    @property
+    @lru_cache()
+    def sot_prev(self) -> int: return self._token_id("<|startofprev|>")
+
+    @property
+    @lru_cache()
+    def no_speech(self) -> int: return self._token_id("<|nospeech|>")
+
+    @property
+    @lru_cache()
+    def no_timestamps(self) -> int: return self._token_id("<|notimestamps|>") 
+
     @property
     @lru_cache()
     def timestamp_begin(self) -> int: return self.tokenizer.all_special_ids[-1]+1
