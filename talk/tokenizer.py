@@ -126,6 +126,16 @@ TO_LANGUAGE_CODE = {
     "castilian": "es",
 }
 
+@dataclass(frozen=True)
+class Tokenizer:
+    tokenizer: "GPT2TokenizerFast"
+    language: Optional[str]
+    sot_sequence: Tuple[int]
+
+    @property
+    @lru_cache()
+    def timestamp_begin(self) -> int: return self.tokenizer.all_special_ids[-1]+1
+
 @lru_cache(maxsize=None)
 def build_tokenizer(name: str="gpt2"):
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
