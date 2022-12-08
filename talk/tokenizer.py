@@ -132,7 +132,7 @@ class Tokenizer:
     language: Optional[str]
     sot_sequence: Tuple[int]
 
-    def _token_id(self, token): return self.tokenizer.vocab[token]
+    def _token_id(self, token): return self.tokenizer.encode(token)[0]
 
     def encode(self, text:str, **kwargs): return self.tokenizer.encode(text, **kwargs)
     
