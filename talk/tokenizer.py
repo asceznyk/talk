@@ -197,9 +197,9 @@ def get_tokenizer(
                 raise ValueError(f"Unsupported language {language}")
             language = TO_LANGUAGE_CODE[language] 
 
-    task, language = None, None
-    if multilingual:
-        task, language = task or "transcribe", language or "en" 
+    task, language = task or "transcribe", language or "en" 
+    if not multilingual:
+        task, language = None, None
 
     tokenizer = build_tokenizer(name="gpt2" if not multilingual else "multilingual") 
 
