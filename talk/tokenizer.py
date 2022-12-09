@@ -138,6 +138,17 @@ class Tokenizer:
     
     def decode(self, ids:Union[int, List[int], np.ndarray, torch.Tensor], **kwargs): return self.tokenizer.decode(ids, **kwargs)
 
+    def decode_with_timestamps(self, tokens):
+        outputs = [[]]
+        for token in tokens:
+            if token >= self.timestamp_begin:
+                outputs.append(f"<|{(token - self.timestamp_begin) * 0.02:.2f}|>")
+                outputs.append([])
+            else: outputs[-1].append(token)
+        
+        outputs = [s if isinstance(s, str) else self.tokenizer.decode(s) for s in outputs]
+        return "".join(outputs)
+
     @property
     @lru_cache()
     def eot(self) -> int:return self.tokenizer.eos_token_id
