@@ -132,7 +132,7 @@ class Tokenizer:
     language: Optional[str]
     sot_sequence: Tuple[int]
 
-    def _token_id(self, token): return self.tokenizer.encode(token)[0]
+    def _token_id(self, text): return self.tokenizer.encode(text)[0]
 
     def encode(self, text:str, **kwargs): return self.tokenizer.encode(text, **kwargs)
     
@@ -205,6 +205,22 @@ class Tokenizer:
     @lru_cache()
     def all_language_codes(self) -> Tuple[str]: 
         return tuple(self.decode([l]).strip("<|>") for l in self.all_language_tokens)
+
+    @property
+    @lru_cache()
+    def non_speech_tokens(self) -> Tuple[int]:
+        symbols = list("\"#()*+/:;<=>@[\\]^_`{|}~「」『』")
+        symbols += "<< >> <<< >>> -- --- -( -[ (' (\" (( )) ((( ))) [[ ]] {{ }} ♪♪ ♪♪♪".split()
+        misc = set("♩♪♫♬♭♮♯")
+        assert all(0x2640 <= ord(c) <= 0x267F for c in misc)
+
+        result = {self.tokenizer.encode(" -")[0], self.tokenizer.encode(" '")[0]}
+        for symbol in symbols + list(misc):
+            for tokens in [self.tokenizer.encode(symbol), self.tokenizer.encode(" "+symbol)]:
+                if len(tokens) == 1 or symbol in misc:
+                    result.add(tokens[0])
+
+        return tuple(sorted(result))
 
 @lru_cache(maxsize=None)
 def build_tokenizer(name: str="gpt2"):
