@@ -138,13 +138,13 @@ class Tokenizer:
     
     def decode(self, ids:Union[int, List[int], np.ndarray, torch.Tensor], **kwargs): return self.tokenizer.decode(ids, **kwargs)
 
-    def decode_with_timestamps(self, tokens):
+    def decode_with_timestamps(self, token_ids):
         outputs = [[]]
-        for token in tokens:
-            if token >= self.timestamp_begin:
-                outputs.append(f"<|{(token - self.timestamp_begin) * 0.02:.2f}|>")
+        for token_id in token_ids:
+            if token_id >= self.timestamp_begin:
+                outputs.append(f"<|{(token_id - self.timestamp_begin) * 0.02:.2f}|>")
                 outputs.append([])
-            else: outputs[-1].append(token)
+            else: outputs[-1].append(token_id)
         
         outputs = [s if isinstance(s, str) else self.tokenizer.decode(s) for s in outputs]
         return "".join(outputs)
@@ -176,6 +176,35 @@ class Tokenizer:
     @property
     @lru_cache()
     def timestamp_begin(self) -> int: return self.tokenizer.all_special_ids[-1]+1
+
+    @property
+    @lru_cache()
+    def sot_sequence_including_notimestamps(self) -> Tuple[int]:
+        return tuple(list(self.sot_sequence) + [self.no_timestamps])
+
+    @property
+    @lru_cache()
+    def language_token(self) -> int:
+        if self.language is None:
+            raise ValueError(f"The Tokenizer doesn't have a language")
+        return self.tokenizer.vocab[f"<|{self.language}|>"]
+
+    @property
+    @lru_cache()
+    def all_language_tokens(self) -> Tuple[int]:
+        result = []
+        for token, token_id in zip(
+            self.tokenizer.additional_special_tokens,
+            self.tokenizer.additional_special_tokens_ids,
+        ):
+            if token.strip("<|>") in LANGUAGES:
+                result.append(token_id)
+        return tuple(result)
+
+    @property
+    @lru_cache()
+    def all_language_codes(self) -> Tuple[str]: 
+        return tuple(self.decode([l]).strip("<|>") for l in self.all_language_tokens)
 
 @lru_cache(maxsize=None)
 def build_tokenizer(name: str="gpt2"):
