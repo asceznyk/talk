@@ -32,7 +32,7 @@ def embed_position(length, dims, max_scale=10000):
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, n_state: int, n_head: int):
-        self.super().__init__()
+        super().__init__()
         self.n_head = n_head
         self.query = nn.Linear(n_state, n_state)
         self.key = nn.Linear(n_state, n_state, bias=False)
