@@ -30,7 +30,7 @@ def embed_position(length, dims, max_scale=10000):
     scaled_time = torch.arange(length)[:, np.newaxis] * torch.exp(-np.log(max_scale) / (dims // 2 - 1) * torch.arange(dims // 2))[np.newaxis, :]
     return torch.cat([torch.sin(scaled_time), torch.cos(scaled_time)], dim=1)
 
-class MultiHeadedAttention(nn.Module):
+class MultiHeadAttention(nn.Module):
     def __init__(self, n_state: int, n_head: int):
         self.super().__init__()
         self.n_head = n_head
