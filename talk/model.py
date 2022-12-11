@@ -53,7 +53,7 @@ class MultiHeadAttention(nn.Module):
     def forward(x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache=Optional[dict]):
         q = self.query(x)
 
-        if kv_cache is None or xa is None or self.key is not in kv_cache:
+        if kv_cache is None or xa is None or self.key not in kv_cache:
             k = self.key(x if xa is None else xa)
             v = self.value(x if xa is None else xa)
         else:
