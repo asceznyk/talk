@@ -27,7 +27,7 @@ class ModelDimensions:
 
 def embed_position(length, dims, max_scale=10000):
     assert dims % 2 == 0 
-    scaled_time = torch.arange(length)[:, np.newaxis] * torch.exp(-np.log(max_scale) / (dims // 2 - 1) * torch.arange(dims))[np.newaxis, :]
+    scaled_time = torch.arange(length)[:, np.newaxis] * torch.exp(-np.log(max_scale) / (dims // 2 - 1) * torch.arange(dims // 2))[np.newaxis, :]
     return torch.cat([torch.sin(scaled_time), torch.cos(scaled_time)], dim=1)
 
 
