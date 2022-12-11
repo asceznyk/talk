@@ -50,7 +50,7 @@ class MultiHeadAttention(nn.Module):
         if mask is not None: qk += mask[:n_ctx, :n_ctx]
         return (F.softmax(qk.float(), dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2)
 
-    def forward(x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache=Optional[dict]):
+    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache=Optional[dict]):
         q = self.query(x)
 
         if kv_cache is None or xa is None or self.key not in kv_cache:
