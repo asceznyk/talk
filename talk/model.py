@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from torch import nn
 from torch import Tensor
 
-from torch.nn import LayerNorm, Linear
+from torch.nn import LayerNorm, Linear, Conv1d
 
 # from .transcribe import transcribe as transcribe_function
 # from .decoding import detect_langage as detect_langage_function, decode as decode_function 
@@ -86,5 +86,31 @@ class ResidualAttentionBlock(nn.Module):
         if self.cross_attn:
             x = x + self.cross_attn(self.cross_attn_ln(x), xa, kv_cache=kv_cache)
         return x + self.mlp(self.mlp_ln(x))
+
+class AudioEncoder(nn.Module):
+    def __init__(self, n_mels:int, n_ctx:int, n_state:int, n_head:int, n_layer:int):
+        self.conv1 = Conv1d(n_mels, n_state, kernel_size=3, padding=1)
+        self.conv2 = Conv1d(n_state, n_state, kernel_size=3 stride=2, padding=1)
+
+        self.register_buffer("positional_embedding", embed_position(n_ctx, n_state))
+
+        self.blocks:Iterable[ResidualAttentionBlock] = nn.ModuleList(
+            [ResidualAttentionBlock(n_state, n_head) for _ in range(n_layer)]
+        )
+        self.ln_post = LayerNorm(n_state)
+
+    def forward(self, x:Tensor):
+        x = F.gelu(self.conv1(x)) ## x.shape (batch_size, n_mels, n_ctx)
+        x = F.gelu(self.conv2(x)) ## x.shape (batch_size, n_state, n_ctx)
+
+        x = x.permute(0, 2, 1) + self.positional_embedding ##positional_embedding is broadcasted in batch_size dim
+
+        for block in self.blocks:
+            x = block(x)
+
+        return self.ln_post(x)
+
+
+
 
 
