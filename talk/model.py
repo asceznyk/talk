@@ -9,6 +9,8 @@ import torch.nn.functional as F
 from torch import nn
 from torch import Tensor
 
+from torch.nn import LayerNorm, Linear
+
 # from .transcribe import transcribe as transcribe_function
 # from .decoding import detect_langage as detect_langage_function, decode as decode_function 
 
@@ -34,10 +36,10 @@ class MultiHeadAttention(nn.Module):
     def __init__(self, n_state: int, n_head: int):
         super().__init__()
         self.n_head = n_head
-        self.query = nn.Linear(n_state, n_state)
-        self.key = nn.Linear(n_state, n_state, bias=False)
-        self.value = nn.Linear(n_state, n_state)
-        self.out = nn.Linear(n_state, n_state)
+        self.query = Linear(n_state, n_state)
+        self.key = Linear(n_state, n_state, bias=False)
+        self.value = Linear(n_state, n_state)
+        self.out = Linear(n_state, n_state)
 
     def qkv_attention(self, q:Tensor, k:Tensor, v:Tensor, mask:Optional[Tensor] = None):
         _, n_ctx, n_state = q.shape
@@ -54,15 +56,35 @@ class MultiHeadAttention(nn.Module):
         q = self.query(x)
 
         if kv_cache is None or xa is None or self.key not in kv_cache:
-            k = self.key(x if xa is None else xa)
-            v = self.value(x if xa is None else xa)
+            inp = x if xa is None else xa 
+            k = self.key(inp)
+            v = self.value(inp)
         else:
             k = kv_cache[self.key]
             v = kv_cache[self.value]
 
         return self.out(self.qkv_attention(q, k, v, mask))
 
+class ResidualAttentionBlock(nn.Module):
+    def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):
+        super().__init__()
 
+        self.attn = MultiHeadAttention(n_state, n_head)
+        self.attn_ln = LayerNorm(n_state)
 
+        self.cross_attn = MultiHeadAttention(n_state, n_head) if cross_attention else None
+        self.cross_attn_ln = LayerNorm(n_state) if cross_attention else None 
+
+        n_mlp = 4 * n_state
+        self.mlp = nn.Sequential(
+            Linear(n_state, n_mlp), nn.GELU(), Linear(n_mlp, n_state)
+        )
+        self.mlp_ln = LayerNorm(n_state)
+
+    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None):
+        x = x + self.attn(self.attn_ln(x), mask=mask, kv_cache=kv_cache)
+        if self.cross_attn:
+            x = x + self.cross_attn(self.cross_attn_ln(x), xa, kv_cache=kv_cache)
+        return x + self.mlp(self.mlp_ln(x))
 
 
