@@ -112,7 +112,29 @@ class AudioEncoder(nn.Module):
 
         return self.ln_post(x)
 
+class TextDecoder(nn.Module):
+    def __init__(self, n_vocab:int, n_ctx:int, n_state:int, n_head:int, n_layer:int):
+        super().__init__()
 
+        self.token_embedding = nn.Embedding(n_vocab, n_state)
+        self.positional_embedding = nn.Parameter(torch.empty(n_ctx, n_state))
+
+        self.register_buffer("mask", torch.emtpy(n_ctx, n_ctx).fill_(-np.inf).triu_(1))
+
+        self.blocks:Iterable[ResidualAttentionBlock] = nn.ModuleList(
+            [ResidualAttentionBlock(n_state, n_head, cross_attention=True) for _ in range(n_layer)]
+        )
+
+        self.ln = LayerNorm(n_state)
+
+    def forward(self, x:Tensor, xa:Tensor, kv_cache:Optional[dict]=None):
+        offset = next(iter(kv_cache.values())).shape[1] if kv_cache else 0
+        x = self.token_embedding(x) + self.positional_embedding[offset:offset+x.shape[-1]]
+
+        for block in self.blocks:
+            x = block(x, xa, mask=self.mask, kv_cache=kv_cache)
+
+        return (self.ln(x) @ torch.transpose(self.token_embedding.weight, 0, 1))
 
 
 
