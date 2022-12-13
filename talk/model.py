@@ -119,7 +119,7 @@ class TextDecoder(nn.Module):
         self.token_embedding = nn.Embedding(n_vocab, n_state)
         self.positional_embedding = nn.Parameter(torch.empty(n_ctx, n_state))
 
-        self.register_buffer("mask", torch.emtpy(n_ctx, n_ctx).fill_(-np.inf).triu_(1))
+        self.register_buffer("mask", torch.empty(n_ctx, n_ctx).fill_(-np.inf).triu_(1))
 
         self.blocks:Iterable[ResidualAttentionBlock] = nn.ModuleList(
             [ResidualAttentionBlock(n_state, n_head, cross_attention=True) for _ in range(n_layer)]
