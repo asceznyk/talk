@@ -136,5 +136,42 @@ class TextDecoder(nn.Module):
 
         return (self.ln(x) @ torch.transpose(self.token_embedding.weight, 0, 1))
 
+class Talk(nn.Module):
+    def __init__(self, dims:ModelDimensions):
+        super().__init__()
+        self.dims = dims
+
+        self.encoder = AudioEncoder(
+            dims.n_mels,
+            dims.n_audio_ctx,
+            dims.n_audio_state,
+            dims.n_audio_head,
+            dims.n_audio_layer
+        )
+
+        self.decoder = TextDecoder(
+            dims.n_vocab,
+            dims.n_text_ctx,
+            dims.n_text_state,
+            dims.n_text_head,
+            dims.n_text_layer
+        )
+
+    @property
+    def device(self): return next(self.parameters()).device
+
+    @property
+    def is_multilingual(self): return self.dims.n_vocab == 51865
+
+    def embed_audio(self, mel:Tensor): return self.encoder(mel)
+
+    def logits(self, tokens:Tensor, audio_features:Tensor): 
+        return self.decoder(tokens, audio_features)
+
+    def forward(self, mel:Tensor, tokens:Tensor):
+        return self.decoder(tokens, self.encoder(mel))
+
+
+
 
 
