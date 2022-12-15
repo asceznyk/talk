@@ -170,8 +170,25 @@ class Talk(nn.Module):
 
     def forward(self, mel:Tensor, tokens:Tensor):
         return self.decoder(tokens, self.encoder(mel))
+    
+    def install_cache(self, cache:Optional[dict] = None): 
+        cache = {**cache} if cache is not None else {}
+        hooks = []
 
+        def save_to_cache(module, _, output):
+            if module not in cache or output.shape[1] > self.decoder.positional_embedding.shape[0]:
+                cache[module] = output
+            else:
+                cache[module] = torch.cat([cache[module], output], dim=1).detach()
+            return cache[module]
 
+        def install_hooks(layer:nn.Module):
+            if isinstance(layer, MultiHeadAttention):
+                hooks.append(layer.key.register_forward_hook(save_to_cache))
+                hooks.append(layer.value.register_forward_hook(save_to_cache))
+
+        self.decoder.apply(install_hooks)
+        return cache, hooks
 
 
 
