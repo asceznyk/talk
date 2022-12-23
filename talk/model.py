@@ -12,7 +12,7 @@ from torch import Tensor
 from torch.nn import LayerNorm, Linear, Conv1d
 
 # from .transcribe import transcribe as transcribe_function
-# from .decoding import detect_langage as detect_langage_function, decode as decode_function 
+from .decoding import detect_language as detect_language_function, decode as decode_function 
 
 @dataclass
 class ModelDimensions:
@@ -189,6 +189,8 @@ class Talk(nn.Module):
 
         self.decoder.apply(install_hooks)
         return cache, hooks
+
+    detect_language = detect_language_function
 
 
 

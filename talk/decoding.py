@@ -51,6 +51,45 @@ class DecodingResult:
     temperature: float = np.nan
     compression_ratio: float = np.nan
 
+@torch.no_grad()
+def detect_language(model:"Whisper", mel:Tensor, tokenizer:Tokenizer = None) -> Tuple[Tensor, List[dict]]:
+    if tokenizer is None:
+        tokenizer = get_tokenizer(model.is_multilingual)
+    if tokenizer.language is None or tokenizer.language_token not in tokenizer.sot_sequence:
+        raise ValueError("This model dosen't have language tokens")
+
+    single = mel.ndim == 2
+    if single: mel = mel.unsqueeze(0)
+
+    if mel.shape[-2:] != (model.dims.n_audio_ctx, model.dims.n_audio_state):
+        mel = model.encoder(mel)
+
+    n_audio = mel.shape[0]
+    x = torch.tensor([[tokenizer.sot]] * n_audio).to(model.device)
+    logits = model.logits(x, mel)[:, 0] ## grab the first from sequence
+
+    mask = torch.ones(logits.shape[-1], dtype=torch.bool)
+    mask[list(model.all_language_tokens)] = False
+    logits[:, mask] = -np.inf
+    language_tokens = logits.argmax(dim=-1)
+    language_token_probs = logits.softmax(dim=-1).cpu()
+    language_probs = [
+        {
+            c: language_token_probs[i, j].item()
+            for j, c in zip(tokenizer.all_language_tokens,  tokenizer.all_language_codes)
+        }
+        for i in range(n_audio)
+    ]
+
+    if single:
+        language_tokens = language_tokens[0]
+        language_probs = language_probs[0]
+
+    return language_tokens, language_probs
+
+def decode(): return False ##will write this down after!
+
+
 
 
 
