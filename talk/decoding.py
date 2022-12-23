@@ -69,7 +69,7 @@ def detect_language(model:"Whisper", mel:Tensor, tokenizer:Tokenizer = None) -> 
     logits = model.logits(x, mel)[:, 0] ## grab the first from sequence
 
     mask = torch.ones(logits.shape[-1], dtype=torch.bool)
-    mask[list(model.all_language_tokens)] = False
+    mask[list(tokenizer.all_language_tokens)] = False
     logits[:, mask] = -np.inf
     language_tokens = logits.argmax(dim=-1)
     language_token_probs = logits.softmax(dim=-1).cpu()
