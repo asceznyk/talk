@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from .audio import load_audio, log_mel_spec, pad_or_trim
 #from .decoding import DecodingOptions, DecodingResult, decode, detect_language
-from .model import Whisper, ModelDimensions
+from .model import Talk, ModelDimensions
 #from .transcribe import transcribe
 
 
