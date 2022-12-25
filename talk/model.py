@@ -191,6 +191,7 @@ class Talk(nn.Module):
         return cache, hooks
 
     detect_language = detect_language_function
+    decode = decode_function
 
 
 
