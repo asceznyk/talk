@@ -104,12 +104,10 @@ class ApplyTimestampRules(LogitFilter):
         self.sample_begin = sample_begin
         self.max_initial_timestamp_index = max_initial_timestamp_index
 
-    def apply(self, logits: Tensor, tokens: Tensor):
-        # suppress <|notimestamps|> which is handled by without_timestamps
+    def apply(self, logits:Tensor, tokens:Tensor):
         if self.tokenizer.no_timestamps is not None:
             logits[:, self.tokenizer.no_timestamps] = -np.inf
 
-        # timestamps have to appear in pairs, except directly before EOT; mask logits accordingly
         for k in range(tokens.shape[0]):
             seq = [t for t in tokens[k, self.sample_begin :].tolist()]
             last_was_timestamp = len(seq) >= 1 and seq[-1] >= self.tokenizer.timestamp_begin
@@ -298,7 +296,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
         )
     else:'''
     
-    decoder = GreedyDecoder(options.temperature, tokenizer.eot)
+    #decoder = GreedyDecoder(options.temperature, tokenizer.eot)
     logit_filters = []
 
     if options.suppress_blank:
