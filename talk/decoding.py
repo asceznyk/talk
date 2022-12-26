@@ -234,7 +234,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
             [tokenizer.sot, tokenizer.sot_prev, tokenizer.sot_lm]
         )
         if tokenizer.no_speech is not None: 
-            suppress_tokens.append(self.tokenizer.no_speech)
+            suppress_tokens.append(tokenizer.no_speech)
 
         return tuple(sorted(set(suppress_tokens)))
 
