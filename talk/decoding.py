@@ -29,7 +29,7 @@ class DecodingOptions:
 
     # options for ranking generations (either beams or best-of-N samples)
     length_penalty: Optional[float] = None   # "alpha" in Google NMT, None defaults to length norm
-    sequence_ranker: Callable
+    sequence_ranker: Callable = maximum_likelyhood_ranker
 
     # prompt, prefix, and token suppression
     prompt: Optional[Union[str, List[int]]] = None 
