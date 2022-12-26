@@ -162,7 +162,7 @@ def maximum_likelyhood_ranker(tokens:List[List[Tensor]], sum_logprobs:List[List[
     def scores(logprobs, lengths):
         result = []
         for logprob, length in zip(logprobs, lengths):
-            if length_penalty is not None: penalty = length
+            if length_penalty is None: penalty = length
             else: penalty = ((5 + length) / 6) ** length_penalty
             result.append(logprob/penalty)
         return result
