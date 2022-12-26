@@ -290,7 +290,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     def main_loop(audio_features:Tensor, tokens:Tensor):
         assert audio_features.shape[0] == tokens.shape[0]
         n_batch = audio_features.shape[0]
-        sum_logprobs = torch.zeros(n_batch, device=audio_features)
+        sum_logprobs = torch.zeros(n_batch, device=audio_features.device)
         no_speech_probs = [np.nan] * n_batch
 
         try:
