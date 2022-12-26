@@ -184,7 +184,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         return True
 
-    def get_audio_features():
+    def get_audio_features() -> Tensor:
         if options.fp16: mel = mel.half()
         if mel.shape[-2:] != (model.dims.n_audio_ctx, model.dims.n_audio_state):
             audio_features = model.encoder(mel)
@@ -253,6 +253,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         return languages, lang_probs
 
+    @torch.no_grad()
     def run() -> List[DecodingResult]:
         #decoder.reset()
         n_audio:int = mel.shape[0]
