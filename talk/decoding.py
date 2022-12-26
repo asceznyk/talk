@@ -361,7 +361,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
                 tokens=tokens,
                 text=text,
                 avg_logprob=avg_logprob,
-                no_speech_prob=no_speech_prob
+                no_speech_prob=no_speech_prob,
                 temperature=temperature,
                 compression_ratio=compression_ratio(text)
             )
