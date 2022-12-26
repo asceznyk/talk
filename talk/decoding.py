@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Iterable, Optional, Sequence, Union, TYPE_CHECKING
+from typing import Dict, List, Tuple, Iterable, Optional, Sequence, Union, Callable, TYPE_CHECKING
 
 import numpy as np
 
@@ -29,6 +29,7 @@ class DecodingOptions:
 
     # options for ranking generations (either beams or best-of-N samples)
     length_penalty: Optional[float] = None   # "alpha" in Google NMT, None defaults to length norm
+    sequence_ranker: Callable
 
     # prompt, prefix, and token suppression
     prompt: Optional[Union[str, List[int]]] = None 
@@ -194,6 +195,18 @@ def detect_language(model:"Whisper", mel:Tensor, tokenizer:Tokenizer = None) -> 
 
     return language_tokens, language_probs
 
+def maximum_likelyhood_ranker(tokens:List[List[Tensor]], sum_logprobs:List[List[float]], length_penalty:Optional[float]):
+    def scores(logprobs, lengths):
+        result = []
+        for logprob, length in zip(logprobs, lengths):
+            if length_penalty is not None: penalty = length
+            else: penalty = ((5 + length) / 6) ** length_penalty
+            result.append(logprob/penalty)
+        return result
+
+    lengths = [[len(t) for t in s] for s in tokens]
+    return [np.argmax(scores(p,l)) for p, l in zip(sum_logprobs, lengths)]
+    
 @torch.no_grad()
 def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOptions()) -> Union[DecodingResult, List[DecodingResult]]: 
     def verify_options():
@@ -331,13 +344,28 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
             [t[sample_begin:(t==tokenizer.eot).nonzero()[0,0]] for t in s] for s in tokens
         ]
 
+        selected = sequence_ranker(tokens, sum_logprobs, options.length_penalty)
+        tokens:List[List[int]] = [s[i].tolist() for i, s in zip(selected, tokens)] 
+        texts:List[str] = [tokenizer.decode(s).strip() for s in tokens]
+        sum_logprobs:List[float] = [lp[i] for i, lp in zip(selected, sum_logprobs)]
+        avg_logprobs:List[float] = [lp/(len(s)+1) for s, lp in zip(tokens, sum_logprobs)]
+
+        fields = (texts, languages, tokens, audio_features, avg_logprobs, no_speech_probs)
+        if len(set(map(len, fields))) != 1:
+            raise RuntimeError(f"inconsistent result lengths: {list(map(len, fields))}")
+
         return [
             DecodingResult(
                 audio_features=features,
                 language=language,
-                tokens=tokens
+                tokens=tokens,
+                text=text,
+                avg_logprob=avg_logprob,
+                no_speech_prob=no_speech_prob
+                temperature=temperature,
+                compression_ratio=compression_ratio(text)
             )
-            for (features, language, tokens) in zip(audio_features, languages, tokens)
+            for (text, language, tokens, features, avg_logprob, no_speech_prob) in zip(*fields)
         ]
 
     single = mel.ndim == 2
@@ -360,8 +388,8 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     sot_index:int = initial_tokens.index(tokenizer.sot)
 
     inference = Inference(model, len(initial_tokens))
-    
-    #sequence_ranker = MaximumLikelihoodRanker(options.length_penalty)
+
+    sequence_ranker = options.sequence_ranker
 
     '''if options.beam_size is not None:
         decoder = BeamSearchDecoder(
