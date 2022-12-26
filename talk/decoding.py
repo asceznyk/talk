@@ -254,7 +254,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
         return languages, lang_probs
 
     def run() -> List[DecodingResult]:
-        decoder.reset()
+        #decoder.reset()
         n_audio:int = mel.shape[0]
         audio_features:Tensor = get_audio_features()
         tokens:Tensor = torch.tensor([initial_tokens]).repeat(n_audio, 1)
