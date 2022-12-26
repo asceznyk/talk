@@ -117,6 +117,7 @@ class GreedyDecoder(TokenDecoder):
 
         logprobs = F.log_softmax(logits.float(), dim=-1)
         sum_logprobs += logprobs[torch.arange(logprobs.shape[0]), next_tokens] * (tokens[:, -1] != self.eot)
+        next_tokens[tokens[:, -1] == self.eot] = self.eot
         return torch.cat([tokens, next_tokens[:, None]], dim=-1), (tokens[:, -1] == self.eot).all()
 
     def finalize(self, tokens:Tensor, sum_logprobs:Tensor):
