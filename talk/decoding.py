@@ -51,6 +51,90 @@ class DecodingResult:
     temperature: float = np.nan
     compression_ratio: float = np.nan
 
+class Inference:
+    def __init__(self, model: "Whisper", initial_token_length: int):
+        self.model: "Whisper" = model
+        self.initial_token_length = initial_token_length
+        self.kv_cache = {}
+        self.hooks = []
+
+    def logits(self, tokens: Tensor, audio_features: Tensor) -> Tensor:
+        if not self.kv_cache:
+            self.kv_cache, self.hooks = self.model.install_cache()
+
+        if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
+        return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache)
+
+    def cleanup_caching(self):
+        for hook in self.hooks:
+            hook.remove()
+
+        self.kv_cache = {}
+        self.hooks = []
+
+    def rearrange_kv_cache(self, source_indices):
+        for module, tensor in self.kv_cache.items():
+            self.kv_cache[module] = tensor[source_indices].detach()
+
+class LogitFilter:
+    def apply(self, logits:Tensor, tokens:Tensor) -> None:
+        raise NotImplementedError
+
+class SuppressBlank(LogitFilter):
+    def __init__(self, tokenizer: Tokenizer, sample_begin: int):
+        self.tokenizer = tokenizer
+        self.sample_begin = sample_begin
+
+    def apply(self, logits: Tensor, tokens: Tensor):
+        if tokens.shape[1] == self.sample_begin:
+            logits[:, self.tokenizer.encode(" ") + [self.tokenizer.eot]] = -np.inf
+
+class SuppressTokens(LogitFilter):
+    def __init__(self, suppress_tokens: Sequence[int]):
+        self.suppress_tokens = list(suppress_tokens)
+
+    def apply(self, logits: Tensor, tokens: Tensor):
+        logits[:, self.suppress_tokens] = -np.inf
+
+class ApplyTimestampRules(LogitFilter):
+    def __init__(
+        self, tokenizer: Tokenizer, sample_begin: int, max_initial_timestamp_index: Optional[int]
+    ):
+        self.tokenizer = tokenizer
+        self.sample_begin = sample_begin
+        self.max_initial_timestamp_index = max_initial_timestamp_index
+
+    def apply(self, logits: Tensor, tokens: Tensor):
+        # suppress <|notimestamps|> which is handled by without_timestamps
+        if self.tokenizer.no_timestamps is not None:
+            logits[:, self.tokenizer.no_timestamps] = -np.inf
+
+        # timestamps have to appear in pairs, except directly before EOT; mask logits accordingly
+        for k in range(tokens.shape[0]):
+            seq = [t for t in tokens[k, self.sample_begin :].tolist()]
+            last_was_timestamp = len(seq) >= 1 and seq[-1] >= self.tokenizer.timestamp_begin
+            penultimate_was_timestamp = len(seq) < 2 or seq[-2] >= self.tokenizer.timestamp_begin
+
+            if last_was_timestamp:
+                if penultimate_was_timestamp:  # has to be non-timestamp
+                    logits[k, self.tokenizer.timestamp_begin :] = -np.inf
+                else:  # cannot be normal text tokens
+                    logits[k, : self.tokenizer.eot] = -np.inf
+
+        if tokens.shape[1] == self.sample_begin:
+            logits[:, : self.tokenizer.timestamp_begin] = -np.inf
+
+            if self.max_initial_timestamp_index is not None:
+                last_allowed = self.tokenizer.timestamp_begin + self.max_initial_timestamp_index
+                logits[:, last_allowed + 1 :] = -np.inf
+
+        logprobs = F.log_softmax(logits.float(), dim=-1)
+        for k in range(tokens.shape[0]):
+            timestamp_logprob = logprobs[k, self.tokenizer.timestamp_begin :].logsumexp(dim=-1)
+            max_text_token_logprob = logprobs[k, : self.tokenizer.timestamp_begin].max()
+            if timestamp_logprob > max_text_token_logprob:
+                logits[k, : self.tokenizer.timestamp_begin] = -np.inf
+
 @torch.no_grad()
 def detect_language(model:"Whisper", mel:Tensor, tokenizer:Tokenizer = None) -> Tuple[Tensor, List[dict]]:
     if tokenizer is None:
@@ -86,31 +170,6 @@ def detect_language(model:"Whisper", mel:Tensor, tokenizer:Tokenizer = None) -> 
         language_probs = language_probs[0]
 
     return language_tokens, language_probs
-
-class Inference:
-    def __init__(self, model: "Whisper", initial_token_length: int):
-        self.model: "Whisper" = model
-        self.initial_token_length = initial_token_length
-        self.kv_cache = {}
-        self.hooks = []
-
-    def logits(self, tokens: Tensor, audio_features: Tensor) -> Tensor:
-        if not self.kv_cache:
-            self.kv_cache, self.hooks = self.model.install_cache()
-
-        if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
-        return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache)
-
-    def cleanup_caching(self):
-        for hook in self.hooks:
-            hook.remove()
-
-        self.kv_cache = {}
-        self.hooks = []
-
-    def rearrange_kv_cache(self, source_indices):
-        for module, tensor in self.kv_cache.items():
-            self.kv_cache[module] = tensor[source_indices].detach()
 
 @torch.no_grad()
 def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOptions()) -> Union[DecodingResult, List[DecodingResult]]: 
@@ -158,8 +217,57 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         return tuple(tokens)
 
-    def run():
+    
+    def get_suppress_tokens() -> Tuple[int]:
+        suppress_tokens = options.suppress_tokens
+
+        if isinstance(suppress_tokens, str):
+            suppress_tokens = [int(t) for t in suppress_tokens.split(",")]
+
+        if -1 in suppress_tokens:
+            suppress_tokens = [t for t in suppress_tokens if t >= 0]
+            suppress_tokens.extend(tokenizer.non_speech_tokens)
+        elif suppress_tokens is None or len(suppress_tokens) == 0:
+            suppress_tokens = []  # interpret empty string as an empty list
+        else:
+            assert isinstance(suppress_tokens, list), "suppress_tokens must be a list"
+
+        suppress_tokens.extend(
+            [tokenizer.sot, tokenizer.sot_prev, tokenizer.sot_lm]
+        )
+        if tokenizer.no_speech is not None: 
+            suppress_tokens.append(self.tokenizer.no_speech)
+
+        return tuple(sorted(set(suppress_tokens)))
+
+    def main_loop(audio_features:Tensor, tokens:Tensor):
+        assert audio_features.shape[0] == tokens.shape[0]
+
+    def get_language(audio_features:Tensor, tokens:Tensor):
+        languages = [options.language] * audio_features.shape[0]
+        lang_probs = None
+
+        if options.task == "lang_id" or options.language is None:
+            lang_tokens, lang_probs = model.detect_language(audio_features, tokens)
+            languages = [max(p, key=p.get) for p in lang_probs]
+            if options.language is None:
+                tokens[:, sot_index + 1] = lang_tokens
+
+        return languages, lang_probs
+
+    def run() -> List[DecodingResult]:
+        decoder.reset()
+        n_audio:int = mel.shape[0]
         audio_features:Tensor = get_audio_features()
+        tokens:Tensor = torch.tensor([initial_tokens]).repeat(n_audio, 1)
+
+        languages, lang_probs = get_language(audio_features, tokens)
+        if options.task == "lang_id":
+            return [
+                DecodingResult(
+                    audio_features=features, language=language, language_probs=probs
+                ) for features, language, probs in zip(audio_features, languages, lang_probs)
+            ]
 
     single = mel.ndim == 2
     if single: mel = mel.unsqueeze(0)
@@ -168,30 +276,31 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
     language = options.language or "en"
     tokenizer = get_tokenizer(model.is_multilingual, language=language, task=options.task)
-    n_group: int = options.beam_size or options.best_of or 1
-    n_ctx: int = model.dims.n_text_ctx
-    sample_len: int = options.sample_len or model.dims.n_text_ctx // 2
+    n_group:int = options.beam_size or options.best_of or 1
+    n_ctx:int = model.dims.n_text_ctx
+    sample_len:int = options.sample_len or model.dims.n_text_ctx // 2
 
-    sot_sequence: Tuple[int] = tokenizer.sot_sequence
+    sot_sequence:Tuple[int] = tokenizer.sot_sequence
     if options.without_timestamps:
         sot_sequence = tokenizer.sot_sequence_including_notimestamps
 
-    initial_tokens: Tuple[int] = get_initial_tokens()
-    sample_begin: int = len(initial_tokens)
-    sot_index: int = initial_tokens.index(tokenizer.sot)
+    initial_tokens:Tuple[int] = get_initial_tokens()
+    sample_begin:int = len(initial_tokens)
+    sot_index:int = initial_tokens.index(tokenizer.sot)
 
     inference = Inference(model, len(initial_tokens))
     
-    '''sequence_ranker = MaximumLikelihoodRanker(options.length_penalty)
+    #sequence_ranker = MaximumLikelihoodRanker(options.length_penalty)
 
-    if options.beam_size is not None:
+    '''if options.beam_size is not None:
         decoder = BeamSearchDecoder(
             options.beam_size, tokenizer.eot, inference, options.patience
         )
-    else:
-        decoder = GreedyDecoder(options.temperature, tokenizer.eot)
-
+    else:'''
+    
+    decoder = GreedyDecoder(options.temperature, tokenizer.eot)
     logit_filters = []
+
     if options.suppress_blank:
         logit_filters.append(SuppressBlank(tokenizer, sample_begin))
     if options.suppress_tokens:
@@ -205,10 +314,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
             ApplyTimestampRules(tokenizer, sample_begin, max_initial_timestamp_index)
         )
 
-    result = run()'''
-
-
-    result = [101] ## just for gags!
+    result = run()
     if single: result = result[0] 
     return result 
 
