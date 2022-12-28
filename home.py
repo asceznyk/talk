@@ -20,11 +20,11 @@ def main_page():
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTS
 
     if request.method == 'POST':
-        flash("post request!")
+        print("post request!")
         if request.form.get('reqtype') == 'upload':
             file = request.files['audio']
             if file.filename == '':
-                flash("No selected file!") 
+                print("No selected file!") 
             if file and allowed_file(file.filename):
                 file.save(os.path.join(app.config["UPLOAD_DIR"], filename))
                 print("successfully uploaded audio!")
