@@ -16,7 +16,7 @@ from .model import Talk, ModelDimensions
 
 def load_model(ckpt_path):
     with open(ckpt_path, "rb") as f: ckpt = torch.load(f) 
-    model = Talk(ModelDimensions(**ckpt_path['dims']))
+    model = Talk(ModelDimensions(**ckpt['dims']))
     model.load_state_dict(ckpt["model_state_dict"])
     return model
 
