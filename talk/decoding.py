@@ -194,7 +194,7 @@ class DecodingOptions:
     suppress_tokens:Optional[Union[str, Iterable[int]]] = "-1"
     without_timestamps:bool = False
     max_initial_timestamp:Optional[float] = 1.0 
-    fp16:bool = True 
+    fp16:bool = False 
 
 @dataclass(frozen=True)
 class DecodingResult:
