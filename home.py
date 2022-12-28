@@ -20,8 +20,9 @@ def main_page():
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTS
 
     if request.method == 'POST':
+        flash("post request!")
         if request.form.get('reqtype') == 'upload':
-            file = request.files['file']
+            file = request.files['audio']
             if file.filename == '':
                 flash("No selected file!") 
             if file and allowed_file(file.filename):
