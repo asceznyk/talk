@@ -15,7 +15,7 @@ app.config["UPLOAD_DIR"] = "user_data"
 
 ALLOWED_EXTS = {'wav', 'mp3', 'ogg'}
 
-model = talk.load_model("assets/tiny.pt")
+model = talk.load_model("/app/assets/tiny.pt")
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
