@@ -1,0 +1,50 @@
+html, body {
+	margin:0;
+	color: #fff;
+	background: #000;
+}
+
+.wrapper {
+	margin:auto;
+	max-width: 500px;
+}
+
+.header, .design, .transcript {
+	text-align:center;
+}
+
+.btn {
+	border:none;
+	border-radius:5px;
+	padding:5px;
+	min-width:50px;
+	text-align:center;
+	background:blanchedalmond
+}
+
+.btn:hover {
+	background:aliceblue;
+}
+
+.recorder, .player {
+	margin-bottom:10px;
+}
+
+.transcript {
+	border: 1px solid;
+	text-align: center;
+	color: #fff;
+	padding: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+	.wrapper {
+		width: 90vw;
+		
+	}
+}
+
+
+
+
+

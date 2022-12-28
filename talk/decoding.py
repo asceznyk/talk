@@ -16,7 +16,7 @@ from .utils import compression_ratio
 if TYPE_CHECKING: from .model import Whisper
 
 class Inference:
-    def __init__(self, model: "Whisper", initial_token_length: int):
+    def __init__(self, model:"Whisper", initial_token_length:int):
         self.model: "Whisper" = model
         self.initial_token_length = initial_token_length
         self.kv_cache = {}
@@ -173,40 +173,40 @@ def maximum_likelyhood_ranker(tokens:List[List[Tensor]], sum_logprobs:List[List[
 
 @dataclass(frozen=True)
 class DecodingOptions:
-    task: str = "transcribe" # whether to perform X->X "transcribe" or X->English "translate"
-    language: Optional[str] = None # language that the audio is in; uses detected language if None
+    task:str = "transcribe" # whether to perform X->X "transcribe" or X->English "translate"
+    language:Optional[str] = None # language that the audio is in; uses detected language if None
 
     # sampling-related options
-    temperature: float = 0.0
-    sample_len: Optional[int] = None # maximum number of tokens to sample
-    best_of: Optional[int] = None # number of independent samples to collect, when t > 0
-    beam_size: Optional[int] = None # number of beams in beam search, when t == 0
-    patience: Optional[float] = None # patience in beam search (https://arxiv.org/abs/2204.05424)
+    temperature:float = 0.0
+    sample_len:Optional[int] = None # maximum number of tokens to sample
+    best_of:Optional[int] = None # number of independent samples to collect, when t > 0
+    beam_size:Optional[int] = None # number of beams in beam search, when t == 0
+    patience:Optional[float] = None # patience in beam search (https://arxiv.org/abs/2204.05424)
 
     # options for ranking generations (either beams or best-of-N samples)
-    length_penalty: Optional[float] = None   # "alpha" in Google NMT, None defaults to length norm
-    sequence_ranker: Callable = maximum_likelyhood_ranker
+    length_penalty:Optional[float] = None   # "alpha" in Google NMT, None defaults to length norm
+    sequence_ranker:Callable = maximum_likelyhood_ranker
 
     # prompt, prefix, and token suppression
-    prompt: Optional[Union[str, List[int]]] = None 
-    prefix: Optional[Union[str, List[int]]] = None 
-    suppress_blank: bool = True 
-    suppress_tokens: Optional[Union[str, Iterable[int]]] = "-1"
-    without_timestamps: bool = False
-    max_initial_timestamp: Optional[float] = 1.0 
-    fp16: bool = True 
+    prompt:Optional[Union[str, List[int]]] = None 
+    prefix:Optional[Union[str, List[int]]] = None 
+    suppress_blank:bool = True 
+    suppress_tokens:Optional[Union[str, Iterable[int]]] = "-1"
+    without_timestamps:bool = False
+    max_initial_timestamp:Optional[float] = 1.0 
+    fp16:bool = True 
 
 @dataclass(frozen=True)
 class DecodingResult:
-    audio_features: Tensor
-    language: str
-    language_probs: Optional[Dict[str, float]] = None
-    tokens: List[int] = field(default_factory=list)
-    text: str = ""
-    avg_logprob: float = np.nan
-    no_speech_prob: float = np.nan
-    temperature: float = np.nan
-    compression_ratio: float = np.nan
+    audio_features:Tensor
+    language:str
+    language_probs:Optional[Dict[str, float]] = None
+    tokens:List[int] = field(default_factory=list)
+    text:str = ""
+    avg_logprob:float = np.nan
+    no_speech_prob:float = np.nan
+    temperature:float = np.nan
+    compression_ratio:float = np.nan
     
 @torch.no_grad()
 def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOptions()) -> Union[DecodingResult, List[DecodingResult]]: 
@@ -375,7 +375,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     assert verify_options()
 
     language = options.language or "en"
-    tokenizer = get_tokenizer(model.is_multilingual, language=language, task=options.task)
+    tokenizer:Tokenizer = get_tokenizer(model.is_multilingual, language=language, task=options.task)
     n_group:int = options.beam_size or options.best_of or 1
     n_ctx:int = model.dims.n_text_ctx
     sample_len:int = options.sample_len or model.dims.n_text_ctx // 2

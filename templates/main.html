@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Speech to text</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header"><h2>Yell - speech to text</h2></div>
+        <div class="design">
+            <div class="recorder">
+                <button class="btn" id="record">Start</button>
+                <button class="btn" id="stop">Stop</button>
+            </div>
+        </div>
+        <div class="transcript" id="transcript">
+            <span>This is where all your speech gets annotated</span>
+        </div>
+    </div>
+    <script type="text/javascript" src="{{ url_for('static', filename='audio.js') }}">
+    </script>
+</body>
+</html>
