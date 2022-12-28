@@ -31,11 +31,11 @@ def main_page():
                 print("No selected file!") 
             if file and allowed_file(file.filename):
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
+                file.save(to_annotate)
                 mel = talk.pad_or_trim(talk.log_mel_spec(to_annotate))
-                print(mel.shape)
+                print(mel.shape) 
                 result = model.decode(mel)[0]
                 text = result.text
-                file.save(to_annotate)
             return json.dumps({"text":text})
     else:
         return render_template('main.html')
