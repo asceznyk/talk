@@ -9,7 +9,7 @@ async function uploadAudio(e) {
 	await fetch('/', {method:"POST", body:formData});	
 }
 
-uploadBtn.addEventListner("click", uploadAudio);
+uploadBtn.onclick(uploadAudio);
 
 
 
