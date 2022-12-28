@@ -22,7 +22,7 @@ def main_page():
     if request.method == 'POST':
         print("post request!")
         if request.form.get('reqtype') == 'upload':
-            print(f"reqtype {request.form.get['reqtype']}")
+            print(f"reqtype {request.form.get('reqtype')}")
             file = request.files['audio']
             if file.filename == '':
                 print("No selected file!") 
