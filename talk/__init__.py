@@ -14,6 +14,11 @@ from .decoding import DecodingOptions, DecodingResult, decode, detect_language
 from .model import Talk, ModelDimensions
 #from .transcribe import transcribe
 
+def load_model(ckpt_path):
+    with open(ckpt_path, "rb") as f: ckpt = torch.load(f) 
+    model = Talk(ModelDimensions(**ckpt_path['dims']))
+    model.load_state_dict(ckpt["model_state_dict"])
+    return model
 
 
 

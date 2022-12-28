@@ -1,6 +1,7 @@
 import os
 import io
 import wave
+import json
 
 import numpy as np
 
@@ -13,6 +14,8 @@ app = Flask(__name__)
 app.config["UPLOAD_DIR"] = "user_data"
 
 ALLOWED_EXTS = {'wav', 'mp3', 'ogg'}
+
+model = talk.load_model("assets/tiny.pt")
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
@@ -27,9 +30,12 @@ def main_page():
             if file.filename == '':
                 print("No selected file!") 
             if file and allowed_file(file.filename):
-                file.save(os.path.join(app.config["UPLOAD_DIR"], file.filename))
-                print("successfully uploaded audio!")
-            return 
+                to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
+                mel = talk.pad_or_trim(talk.log_mel_spec(to_annotate))
+                result = model.decode(mel)[0]
+                text = result.text
+                file.save(to_annotate)
+            return json.dumps({"text":text})
     else:
         return render_template('main.html')
 

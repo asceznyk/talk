@@ -17,6 +17,7 @@ RUN apt-get install -y fuse
 RUN apt-get install -y gcsfuse
 
 RUN mkdir ./assets
+RUN mkdir ./user_data
 
 ENV PORT=5000
 
