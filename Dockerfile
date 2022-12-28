@@ -16,7 +16,7 @@ RUN apt-get update
 RUN apt-get install -y fuse
 RUN apt-get install -y gcsfuse
 
-RUN apt-get install ffmpeg
+RUN apt-get install -y ffmpeg
 
 RUN mkdir ./assets
 RUN mkdir ./user_data
