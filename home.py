@@ -32,6 +32,7 @@ def main_page():
             if file and allowed_file(file.filename):
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
                 mel = talk.pad_or_trim(talk.log_mel_spec(to_annotate))
+                print(mel.shape)
                 result = model.decode(mel)[0]
                 text = result.text
                 file.save(to_annotate)
