@@ -22,11 +22,12 @@ def main_page():
     if request.method == 'POST':
         print("post request!")
         if request.form.get('reqtype') == 'upload':
+            print(f'reqtype {request.form.get['reqtype']}')
             file = request.files['audio']
             if file.filename == '':
                 print("No selected file!") 
             if file and allowed_file(file.filename):
-                file.save(os.path.join(app.config["UPLOAD_DIR"], filename))
+                file.save(os.path.join(app.config["UPLOAD_DIR"], file.filename))
                 print("successfully uploaded audio!")
             return 
     else:
