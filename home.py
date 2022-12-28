@@ -34,7 +34,7 @@ def main_page():
                 file.save(to_annotate)
                 mel = talk.pad_or_trim(talk.log_mel_spec(to_annotate), length=2*model.dims.n_audio_ctx)
                 print(mel.shape) 
-                result = model.decode(mel)[0]
+                result = model.decode(mel)
                 text = result.text
             return json.dumps({"text":text})
     else:
