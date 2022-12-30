@@ -7,7 +7,7 @@ async function uploadAudio(e) {
 	let formData = new FormData();
 	let inpAudio = audioInp.files[0]
 
-	if (inpAudio.type.startswith('audio')) {
+	if (inpAudio.type.startsWith('audio')) {
 		formData.append("reqtype", "upload");
 		formData.append("audio", inpAudio);
 		audioPlayer.src = URL.createObjectURL(inpAudio);
