@@ -24,7 +24,7 @@ async function transcribeAudio(contentElem) {
 	}
 }
 
-uploadBtn.addEventListener("click", transcriptDiv);
+uploadBtn.addEventListener("click", transcribeAudio);
 
 
 
