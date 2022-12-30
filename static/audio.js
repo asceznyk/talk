@@ -3,6 +3,8 @@ const audioInp = document.getElementById("audio");
 const audioPlayer = document.getElementById("player");
 const transcriptDiv = document.getElementById("transcript");
 
+console.log('welcome to talk!')
+
 async function transcribeAudio(contentElem) {
 	transcriptDiv.innerHTML = `transcrbing...`
 
