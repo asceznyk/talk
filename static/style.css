@@ -1,16 +1,37 @@
 html, body {
 	margin:0;
 	color: #fff;
-	background: #000;
+	background: #264653;
+	font-family: monospace;
+	font-size:13px;
 }
 
 .wrapper {
 	margin:auto;
+	margin-top:5px;
 	max-width: 500px;
 }
 
-.header, .design, .transcript {
-	text-align:center;
+.header>h2, .header>p {
+	margin-top:0px;
+	margin-bottom:15px;
+}
+
+.btn, .inpaudio, .transcript {
+	font-family:monospace;
+	font-size:inherit;
+}
+
+.inpaudio, .transcript {
+	border-radius:5px;
+	width:100%;	
+	padding: 5px;
+	display:block;
+	border: 1px solid;
+}
+
+.recorder, .clip {
+	margin-bottom:10px;
 }
 
 .btn {
@@ -19,22 +40,33 @@ html, body {
 	padding:5px;
 	min-width:50px;
 	text-align:center;
-	background:blanchedalmond
+	background:#E9C46A;
+	cursor:pointer;
+	transition:all .25s;
 }
 
 .btn:hover {
-	background:aliceblue;
+	background:#F4A261;
 }
 
-.recorder, .player {
-	margin-bottom:10px;
+.inpaudio {
+	border-radius:5px;
+	margin-bottom:5px;
+	cursor: pointer;
 }
 
-.transcript {
-	border: 1px solid;
-	text-align: center;
-	color: #fff;
-	padding: 5px;
+.inpaudio::-webkit-file-upload-button {
+	visibility: hidden;
+}
+.inpaudio::before {
+	color:#fff;
+	content: 'Select an input audio';
+	display: inline-block;
+	outline: none;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	cursor: pointer;
+	transition:all .25s;
 }
 
 @media only screen and (max-width: 600px) {
@@ -43,6 +75,7 @@ html, body {
 		
 	}
 }
+
 
 
 

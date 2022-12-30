@@ -5,8 +5,12 @@ const transcriptDiv = document.getElementById("transcript");
 
 console.log('welcome to talk!')
 
-async function transcribeAudio(contentElem) {
-	transcriptDiv.innerHTML = `transcrbing...`
+/*async function setOption(e) {
+
+}*/
+
+async function transcribeAudio(e) {
+	transcriptDiv.innerHTML = `transcribing...`
 
 	let formData = new FormData();
 	let inpAudio = audioInp.files[0]
