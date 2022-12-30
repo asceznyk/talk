@@ -13,12 +13,12 @@ import talk
 
 app = Flask(__name__)
 
-for fname in os.listdir("/tmp/"):
-    print(fname)
-    if fname.startswith("talk_user_data_"): app.config["UPLOAD_DIR"] = fname
-    else:
-        app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
+for fname in os.listdir("/tmp/"): 
+    if fname.startswith("talk_user_data_"): 
+        app.config["UPLOAD_DIR"] = fname
         break
+else: 
+    app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
 
 print(app.config["UPLOAD_DIR"])
 
