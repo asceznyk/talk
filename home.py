@@ -16,21 +16,21 @@ app = Flask(__name__)
 tempdir = "/tmp/"
 for fname in os.listdir(tempdir): 
     if fname.startswith("talk_user_data_"): 
-        app.config["UPLOAD_DIR"] = f"{tempdir}/{fname}"
+        app.config["UPLOAD_DIR"] = f"{tempdir}{fname}"
         break
 else: 
     app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
 
 print(app.config["UPLOAD_DIR"])
 
-ALLOWED_EXTS = {'wav', 'mp3', 'ogg'}
+allowed_exts = {'wav', 'mp3', 'ogg'}
 
 model = talk.load_model("assets/tiny.pt")
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
     def allowed_file(filename):
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTS
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_exts
 
     if request.method == 'POST':
         print("post request!")
@@ -47,7 +47,7 @@ def main_page():
                 result = model.decode(mel)
                 text = result.text
             else:
-                text = f"incorrect file format, allowed exts {str(ALLOWED_EXTS)[1:-1]}"
+                text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
 
             return json.dumps({"text":text})
     else:
