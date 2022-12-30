@@ -4,6 +4,8 @@ const audioPlayer = document.getElementById("player");
 const transcriptDiv = document.getElementById("transcript");
 
 async function uploadAudio(e) {
+	transcriptDiv.innerHTML = `transcrbing...`
+
 	let formData = new FormData();
 	let inpAudio = audioInp.files[0]
 
