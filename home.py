@@ -39,6 +39,8 @@ def main_page():
             file = request.files['audio']
             if file.filename == '':
                 print("No selected file!") 
+
+            print(file.filename)
             if file and allowed_file(file.filename): 
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
                 file.save(to_annotate)
