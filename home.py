@@ -12,7 +12,7 @@ from pydub import AudioSegment
 import talk
 
 app = Flask(__name__)
-app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk-user-data")
+app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
 
 print(app.config["UPLOAD_DIR"])
 
