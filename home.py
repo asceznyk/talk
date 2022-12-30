@@ -12,7 +12,12 @@ from pydub import AudioSegment
 import talk
 
 app = Flask(__name__)
-app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
+
+for fname in os.listdir("/tmp/"):
+    if fname.startswith("talk_user_data_"): app.config["UPLOAD_DIR"] = fname
+    else:
+        app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
+        break
 
 print(app.config["UPLOAD_DIR"])
 
@@ -32,8 +37,7 @@ def main_page():
             file = request.files['audio']
             if file.filename == '':
                 print("No selected file!") 
-            if file and allowed_file(file.filename):
-                print(type(file))
+            if file and allowed_file(file.filename): 
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
                 file.save(to_annotate)
                 mel = talk.pad_or_trim(talk.log_mel_spec(to_annotate), length=2*model.dims.n_audio_ctx)
