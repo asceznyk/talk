@@ -3,7 +3,7 @@ const audioInp = document.getElementById("audio");
 const audioPlayer = document.getElementById("player");
 const transcriptDiv = document.getElementById("transcript");
 
-async function uploadAudio(e) {
+async function transcribeAudio(contentElem) {
 	transcriptDiv.innerHTML = `transcrbing...`
 
 	let formData = new FormData();
@@ -21,8 +21,6 @@ async function uploadAudio(e) {
 		transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
 	}
 }
-
-uploadBtn.addEventListener("click", uploadAudio);
 
 
 

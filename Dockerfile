@@ -18,6 +18,8 @@ RUN apt-get install -y gcsfuse
 
 RUN apt-get install -y ffmpeg
 
+RUN mkdir assets
+
 ENV PORT=5000
 
 EXPOSE 5000
