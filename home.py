@@ -13,9 +13,10 @@ import talk
 
 app = Flask(__name__)
 
-for fname in os.listdir("/tmp/"): 
+tempdir = "/tmp/"
+for fname in os.listdir(tempdir): 
     if fname.startswith("talk_user_data_"): 
-        app.config["UPLOAD_DIR"] = fname
+        app.config["UPLOAD_DIR"] = f"{tempdir}/{fname}"
         break
 else: 
     app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
