@@ -3,6 +3,7 @@ import io
 import wave
 import json
 
+import tempfile
 import numpy as np
 
 from flask import Flask, flash, render_template, request
@@ -11,11 +12,13 @@ from pydub import AudioSegment
 import talk
 
 app = Flask(__name__)
-app.config["UPLOAD_DIR"] = "user_data"
+app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk-user-data")
+
+print(app.config["UPLOAD_DIR"])
 
 ALLOWED_EXTS = {'wav', 'mp3', 'ogg'}
 
-model = talk.load_model("/app/assets/tiny.pt")
+model = talk.load_model("assets/tiny.pt")
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
@@ -30,12 +33,16 @@ def main_page():
             if file.filename == '':
                 print("No selected file!") 
             if file and allowed_file(file.filename):
+                print(type(file))
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
                 file.save(to_annotate)
                 mel = talk.pad_or_trim(talk.log_mel_spec(to_annotate), length=2*model.dims.n_audio_ctx)
                 print(mel.shape) 
                 result = model.decode(mel)
                 text = result.text
+            else:
+                text = f"incorrect file format, allowed exts {str(ALLOWED_EXTS)[1:-1]}"
+
             return json.dumps({"text":text})
     else:
         return render_template('main.html')
