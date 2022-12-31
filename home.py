@@ -40,6 +40,7 @@ def main_page():
         if file and allowed_file(file.filename): 
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
+            print(request.form.get('task'))
             options = DecodingOptions(task=request.form.get('task'))
             mel = pad_or_trim(log_mel_spec(to_annotate), length=2*model.dims.n_audio_ctx) 
             result = model.decode(mel, options)
