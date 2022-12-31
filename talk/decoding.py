@@ -209,7 +209,9 @@ class DecodingResult:
     compression_ratio:float = np.nan
     
 @torch.no_grad()
-def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOptions()) -> Union[DecodingResult, List[DecodingResult]]: 
+def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOptions()) -> Union[DecodingResult, List[DecodingResult]]:
+    print(f"decoding, task = {options.task}..")
+
     def verify_options():
         if options.beam_size is not None and options.best_of is not None:
             raise ValueError("beam_size and best_of can't be given together")
