@@ -12,12 +12,18 @@
             <p>for now we are supporting audio files which are <= 30 seconds, please note that any large audio file will be trimmed down to the first 30 seconds and then transcribed</p>
         </div>
         <div class="design">
+            <div class="selecttask">
+                <select id="task" name="task">
+                    <option="transcribe">transcribe</option>
+                    <option="translate">translate</option>
+                </select>
+            </div>
             <div class="recorder">
                 <input type="file" id="audio" class="inpaudio" name="audio"/>
                 <button id="upload" class="btn">Upload audio</button>
             </div>
             <div class="clip">
-                <audio id="player" controls>
+                <audio id="player" class="player" controls>
                     <source src="">
                 </audio>
             </div>
