@@ -71,8 +71,8 @@ function customSelect(className) {
 			this.classList.toggle("select-arrow-active");
 		});
 
-		let selectSelected = document.getElementsByClassName("select-selected");
-		let selectItems = document.getElementsByClassName("select-items");
+		let selectSelected = document.getElementsByClassName("select-selected")[0];
+		let selectItems = document.getElementsByClassName("select-items")[0];
 
 		if(selectItems.classList.value == "select-items") {
 			selectSelected.style.borderBottom = "none"
