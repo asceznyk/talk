@@ -40,7 +40,6 @@ def main_page():
         if file and allowed_file(file.filename): 
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
-            print(request.form.get('task'))
             options = DecodingOptions(task=request.form.get('task'))
             mel = pad_or_trim(log_mel_spec(to_annotate), length=2*model.dims.n_audio_ctx) 
             result = model.decode(mel, options)
@@ -48,7 +47,7 @@ def main_page():
         else:
             text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
 
-            return json.dumps({"text":text})
+        return json.dumps({"text":text})
     else:
         return render_template('main.html')
 
