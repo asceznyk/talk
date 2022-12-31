@@ -72,9 +72,11 @@ function customSelect(className) {
 		});
 
 		if(b.classList.value == "select-items") {
-			a.style.borderBottom = "0px"
+			a.style.borderBottom = "none"
+			b.style.borderTop = "none"
 		} else {
 			a.style.borderBottom = "1px solid"
+			b.style.borderTop = "1px solid";
 		}
 	}
 }
