@@ -73,9 +73,9 @@ html, body {
   left: 0;
   right: 0;
   z-index: 99;
-	color:#ffffff;
-	border:0px 1px 1px 1px;
-	border-radius:5px;
+  color:#ffffff;
+  border: 1px solid;
+  border-radius:5px;
 }
 
 .select-hide {
