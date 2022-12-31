@@ -21,20 +21,82 @@ html, body {
 	transition:all .25s;
 }
 
-.btn, .inpaudio, .transcript {
+.btn, .inpaudio, .transcript, .task {
 	font-family:monospace;
 	font-size:inherit;
 }
 
-.inpaudio, .transcript {
+.selecttask {
+  position: relative;
+  font-family: monospace;
+}
+
+.selecttask select {
+  display: none; /*hide original SELECT element: */
+}
+
+.select-selected {
+  background-color: #264653;
+}
+
+/* Style the arrow inside the select element: */
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 7px;
+}
+
+.select-items div,.select-selected {
+  color: #ffffff;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+}
+
+.select-items {
+  position: absolute;
+  background-color: #264653;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.inpaudio, .transcript, .task {
 	border-radius:5px;
 	width:-webkit-fill-available;	
 	padding: 5px;
 	display:block;
 	border: 1px solid;
+	background:#264653;
+	color:#FFF;
 }
 
-.recorder, .clip {
+.task>option {
+	background:inherit;
+	padding:10px;
+}
+
+.design>* {
 	margin-bottom:10px;
 }
 
@@ -81,8 +143,7 @@ html, body {
 
 @media only screen and (max-width: 600px) {
 	.wrapper {
-		width: 90vw;
-		
+		width: 90vw;	
 	}
 }
 
