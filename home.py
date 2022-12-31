@@ -33,21 +33,22 @@ def main_page():
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_exts
 
     if request.method == 'POST':
+        language = "en"
         file = request.files['audio']
         if file.filename == '':
             print("No selected file!") 
-
         if file and allowed_file(file.filename): 
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
             options = DecodingOptions(task=request.form.get('task'))
             mel = pad_or_trim(log_mel_spec(to_annotate), length=2*model.dims.n_audio_ctx) 
             result = model.decode(mel, options)
-            text = result.text
+            text, language = result.text, result.language
+            print(text, language)
         else:
             text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
 
-        return json.dumps({"text":text})
+        return json.dumps({"text":text, "language":language})
     else:
         return render_template('main.html')
 

@@ -70,6 +70,12 @@ function customSelect(className) {
 			this.nextSibling.classList.toggle("select-hide");
 			this.classList.toggle("select-arrow-active");
 		});
+
+		if(b.classList.value == "select-items") {
+			a.style.borderBottom = "0px"
+		} else {
+			a.style.borderBottom = "1px solid"
+		}
 	}
 }
 

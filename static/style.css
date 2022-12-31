@@ -39,7 +39,6 @@ html, body {
   background-color: #264653;
 }
 
-/* Style the arrow inside the select element: */
 .select-selected:after {
   position: absolute;
   content: "";
@@ -56,12 +55,15 @@ html, body {
   top: 7px;
 }
 
-.select-items div,.select-selected {
+.select-items div, .select-selected {
   color: #ffffff;
-  padding: 8px 16px;
-  border: 1px solid transparent;
-  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  padding: 5px;
   cursor: pointer;
+}
+
+.select-selected {
+  border: 1px solid;
+  border-radius: 5px;
 }
 
 .select-items {
@@ -71,6 +73,9 @@ html, body {
   left: 0;
   right: 0;
   z-index: 99;
+	color:#ffffff;
+	border:0px 1px 1px 1px;
+	border-radius:5px;
 }
 
 .select-hide {
@@ -152,3 +157,4 @@ html, body {
 
 
 
+ 
