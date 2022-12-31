@@ -37,7 +37,7 @@ for (i = 0; i < l; i++) {
 	x[i].appendChild(a);
 	b = document.createElement("DIV");
 	b.setAttribute("class", "select-items select-hide");
-	for (j = 1; j < ll; j++) {
+	for (j = 0; j < ll; j++) {
 		c = document.createElement("DIV");
 		c.innerHTML = selElmnt.options[j].innerHTML;
 		c.addEventListener("click", function(e) {
