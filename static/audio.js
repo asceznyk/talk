@@ -71,12 +71,15 @@ function customSelect(className) {
 			this.classList.toggle("select-arrow-active");
 		});
 
-		if(b.classList.value == "select-items") {
-			a.style.borderBottom = "none"
-			b.style.borderTop = "none"
+		let selectSelected = document.getElementsByClassName("select-selected");
+		let selectItems = document.getElementsByClassName("select-items");
+
+		if(selectItems.classList.value == "select-items") {
+			selectSelected.style.borderBottom = "none"
+			selectItems.style.borderTop = "none"
 		} else {
-			a.style.borderBottom = "1px solid"
-			b.style.borderTop = "1px solid";
+			selectSelected.style.borderBottom = "1px solid"
+			selectItems.style.borderTop = "1px solid";
 		}
 	}
 }
