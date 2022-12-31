@@ -6,8 +6,6 @@ const transcriptDiv = document.getElementById("transcript");
 
 console.log('welcome to talk!')
 
-//let task = taskSelect.value;
-
 async function transcribeAudio(task) {
 	transcriptDiv.innerHTML = `transcribing...`
 
@@ -29,7 +27,7 @@ async function transcribeAudio(task) {
 
 function customSelect() {
 	let x, i, j, l, ll, selElmnt, a, b, c;
-	x = document.getElementsByClassName("custom-select");
+	x = document.getElementsByClassName("selecttask");
 	l = x.length;
 	for (i = 0; i < l; i++) {
 		selElmnt = x[i].getElementsByTagName("select")[0];
