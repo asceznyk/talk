@@ -22,7 +22,7 @@ function selectCkpt() {
 
 	let formData = new FormData();
 	formData.append("checkpoint", this.value);
-	result = sendPOST('/checkpoint/', formData);
+	let result = sendPOST('/checkpoint/', formData);
 	
 	statusDiv.innerHTML = result.status	
 }
@@ -37,7 +37,7 @@ function transcribeAudio(task) {
 		formData.append("task", task);
 		formData.append("audio", inpAudio);
 		audioPlayer.src = URL.createObjectURL(inpAudio);
-		result = sendPOST('/', formData);
+		let result = sendPOST('/', formData);
 		transcriptDiv.innerHTML = result.text	
 	} else {
 		transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
