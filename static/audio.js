@@ -61,8 +61,7 @@ function customSelect(className) {
 							for (k = 0; k < yl; k++) {
 								y[k].removeAttribute("class");
 							}
-							this.setAttribute("class", "same-as-selected");
-							console.log(this.innerHTML);
+							this.setAttribute("class", "same-as-selected");	
 							selectCkpt(this.innerHTML);
 							break;
 						}

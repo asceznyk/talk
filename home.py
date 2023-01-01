@@ -26,7 +26,7 @@ model = load_model("assets/tiny.pt")
 
 @app.route("/checkpoint/", methods=['POST'])
 def get_model(): 
-    model = load_model(f"assets/{request.form.get('checkpoint')}")
+    model = load_model(f"assets/{request.form.get('checkpoint')}.pt")
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
