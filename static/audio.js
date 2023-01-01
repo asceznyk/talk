@@ -9,13 +9,16 @@ const transcriptDiv = document.getElementById("transcript");
 console.log('welcome to talk!')
 
 async function selectCkpt() {
+	statusDiv.innerHTML = `loading checkpoint..`
 	uploadBtn.disabled = true;
+	
 	let formData = new FormData();
 	formData.append("checkpoint", this.value);
 	let result = await fetch('/checkpoint/', {method:"POST", body:formData});
 	result = await result.json();	
-	statusDiv.innerHTML = result.status
+
 	uploadBtn.removeAttribute('disabled');
+	statusDiv.innerHTML = result.status	
 }
 
 async function transcribeAudio(task) {
