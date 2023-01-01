@@ -12,24 +12,29 @@
             <p>for now we are supporting audio files which are <= 30 seconds, please note that any large audio file will be trimmed down to the first 30 seconds and then transcribed</p>
         </div>
         <div class="design">
-            <p>Checkpoint:</p>
-            <div class="selectopts">
-                <select id="checkpoint" name="checkpoint">
-                    <option value="tiny">tiny</option>
-                    <option value="base">base</option>
-                    <option value="small">small</option>
-                    <option value="medium">medium</option>
-                    <option value="large">large</option>
-                </select>
+            <div>
+                <p>Checkpoint:</p>
+                <div class="selectopts">
+                    <select id="checkpoint" name="checkpoint">
+                        <option value="tiny">tiny</option>
+                        <option value="base">base</option>
+                        <option value="small">small</option>
+                        <option value="medium">medium</option>
+                        <option value="large">large</option>
+                    </select>
+                </div>
             </div>
-            <p>Task:</p>
-            <div class="selectopts">
-                <select id="task" name="task">
-                    <option value="transcribe">transcribe</option>
-                    <option value="translate">translate</option>
-                </select>
+            <div>
+                <p>Task:</p>
+                <div class="selectopts">
+                    <select id="task" name="task">
+                        <option value="transcribe">transcribe</option>
+                        <option value="translate">translate</option>
+                    </select>
+                </div>
             </div>
             <div class="recorder">
+                <p>Audio recording:</p>
                 <input type="file" id="audio" class="inpaudio" name="audio"/>
                 <button id="upload" class="btn">Upload audio</button>
             </div>
@@ -38,8 +43,11 @@
                     <source src="">
                 </audio>
             </div>
-            <div class="transcript" id="transcript">
-                <span>This is where your annotations are..</span>
+            <div>
+                <p>Transcript:</p>
+                <div class="transcript" id="transcript">
+                    <span>This is where your annotations are..</span>
+                </div>
             </div>
         </div>
     </div>
