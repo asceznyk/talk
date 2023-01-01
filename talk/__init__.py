@@ -19,8 +19,9 @@ def load_model(ckpt_path):
     with open(ckpt_path, "rb") as f: ckpt = torch.load(f) 
     model = Talk(ModelDimensions(**ckpt['dims']))
     model.load_state_dict(ckpt["model_state_dict"])
-    print("successfully loaded checkpoint!")
-    return model
+    status = "successfully loaded checkpoint!"
+    print(status)
+    return model, status
 
 
 

@@ -26,7 +26,8 @@ model = load_model("assets/tiny.pt")
 
 @app.route("/checkpoint/", methods=['POST'])
 def get_model(): 
-    model = load_model(f"assets/{request.form.get('checkpoint')}.pt")
+    model, status = load_model(f"assets/{request.form.get('checkpoint')}.pt")
+    return json.dumps({"status":status})
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
