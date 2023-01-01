@@ -27,7 +27,8 @@ base_path = "assets/tiny.pt"
 model, _ = load_model(base_path)
 
 @app.route("/checkpoint/", methods=['POST'])
-def get_model(): 
+def get_model():
+    del model
     try:
         model, status = load_model(f"assets/{request.form.get('checkpoint')}.pt")
     except:
