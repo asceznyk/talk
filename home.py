@@ -4,6 +4,7 @@ import wave
 import json
 
 import tempfile
+import traceback
 import numpy as np
 
 from flask import Flask, flash, render_template, request
@@ -22,11 +23,17 @@ else:
     app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
 
 allowed_exts = {'wav', 'mp3', 'ogg'}
-model = load_model("assets/tiny.pt")
+base_path = "assets/tiny.pt"
+model, _ = load_model(base_path)
 
 @app.route("/checkpoint/", methods=['POST'])
 def get_model(): 
-    model, status = load_model(f"assets/{request.form.get('checkpoint')}.pt")
+    try:
+        model, status = load_model(f"assets/{request.form.get('checkpoint')}.pt")
+    except:
+        model, _ = load_model(base_path)
+        status = "model loading has failed, loaded tiny model instead"
+
     return json.dumps({"status":status})
 
 @app.route("/", methods=['GET', 'POST'])

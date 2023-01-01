@@ -3,15 +3,19 @@ const checkpointSelect = document.getElementById("checkpoint");
 const taskSelect = document.getElementById("task");
 const audioInp = document.getElementById("audio");
 const audioPlayer = document.getElementById("player");
+const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
 console.log('welcome to talk!')
 
 async function selectCkpt() {
+	uploadBtn.disabled = true;
 	let formData = new FormData();
-	console.log(this.value)
 	formData.append("checkpoint", this.value);
-	let result = await fetch('/checkpoint/', {method:"POST", body:formData});	
+	let result = await fetch('/checkpoint/', {method:"POST", body:formData});
+	result = await result.json();	
+	statusDiv.innerHTML = result.status
+	uploadBtn.removeAttribute('disabled');
 }
 
 async function transcribeAudio(task) {
