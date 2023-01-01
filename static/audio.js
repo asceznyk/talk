@@ -13,6 +13,7 @@ async function sendPOST(url, formData) {
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
 	uploadBtn.removeAttribute('disabled');
+	console.log(result)
 	return result
 }
 
