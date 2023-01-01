@@ -21,15 +21,12 @@ for fname in os.listdir(tempdir):
 else: 
     app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
 
-print(app.config["UPLOAD_DIR"])
-
 allowed_exts = {'wav', 'mp3', 'ogg'}
-
 model = load_model("assets/tiny.pt")
 
 @app.route("/checkpoint/", methods=['POST'])
 def get_model(): 
-    model = load_model(f"assets/{request.form.get('model')}")
+    model = load_model(f"assets/{request.form.get('checkpoint')}")
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
