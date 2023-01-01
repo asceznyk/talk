@@ -17,17 +17,17 @@ async function sendPOST(url, formData) {
 	return result
 }
 
-function selectCkpt() {
+async function selectCkpt() {
 	statusDiv.innerHTML = `loading checkpoint..`
 
 	let formData = new FormData();
 	formData.append("checkpoint", this.value);
-	let result = sendPOST('/checkpoint/', formData);
+	let result = await sendPOST('/checkpoint/', formData);
 	
 	statusDiv.innerHTML = result.status	
 }
 
-function transcribeAudio(task) {
+async function transcribeAudio(task) {
 	transcriptDiv.innerHTML = `transcribing...`
 
 	let formData = new FormData();
@@ -37,7 +37,7 @@ function transcribeAudio(task) {
 		formData.append("task", task);
 		formData.append("audio", inpAudio);
 		audioPlayer.src = URL.createObjectURL(inpAudio);
-		let result = sendPOST('/', formData);
+		let result = await sendPOST('/', formData);
 		transcriptDiv.innerHTML = result.text	
 	} else {
 		transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
