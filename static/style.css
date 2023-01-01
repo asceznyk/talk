@@ -26,12 +26,12 @@ html, body {
 	font-size:inherit;
 }
 
-.selecttask {
+.selectopts {
   position: relative;
   font-family: monospace;
 }
 
-.selecttask select {
+.selectopts select {
   display: none; /*hide original SELECT element: */
 }
 
