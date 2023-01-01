@@ -8,20 +8,25 @@ const transcriptDiv = document.getElementById("transcript");
 
 console.log('welcome to talk!')
 
-async function selectCkpt() {
-	statusDiv.innerHTML = `loading checkpoint..`
+async function sendPOST(url, formData) {
 	uploadBtn.disabled = true;
-	
+	let result = await fetch(url, {method:"POST", body:formData});
+	result = await result.json();
+	uploadBtn.removeAttribute('disabled');
+	return result
+}
+
+function selectCkpt() {
+	statusDiv.innerHTML = `loading checkpoint..`
+
 	let formData = new FormData();
 	formData.append("checkpoint", this.value);
-	let result = await fetch('/checkpoint/', {method:"POST", body:formData});
-	result = await result.json();	
-
-	uploadBtn.removeAttribute('disabled');
+	result = sendPOST('/checkpoint/', formData);
+	
 	statusDiv.innerHTML = result.status	
 }
 
-async function transcribeAudio(task) {
+function transcribeAudio(task) {
 	transcriptDiv.innerHTML = `transcribing...`
 
 	let formData = new FormData();
@@ -31,9 +36,7 @@ async function transcribeAudio(task) {
 		formData.append("task", task);
 		formData.append("audio", inpAudio);
 		audioPlayer.src = URL.createObjectURL(inpAudio);
-
-		let result = await fetch('/', {method:"POST", body:formData});
-		result = await result.json()
+		result = sendPOST('/', formData);
 		transcriptDiv.innerHTML = result.text	
 	} else {
 		transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
