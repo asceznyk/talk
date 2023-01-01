@@ -63,7 +63,9 @@ function customSelect(className) {
 								y[k].removeAttribute("class");
 							}
 							this.setAttribute("class", "same-as-selected");
-							s.fireEvent("change");
+							let evt = document.createEvent("HTMLEvents");
+							evt.initEvent("change", false, true);
+							s.dispatchEvent(evt);
 							break;
 						}
 					}
