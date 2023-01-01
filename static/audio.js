@@ -7,9 +7,10 @@ const transcriptDiv = document.getElementById("transcript");
 
 console.log('welcome to talk!')
 
-async function selectCkpt(ckpt) {
+async function selectCkpt() {
 	let formData = new FormData();
-	formData.append("checkpoint", ckpt);
+	console.log(this.value)
+	formData.append("checkpoint", this.value);
 	let result = await fetch('/checkpoint/', {method:"POST", body:formData});	
 }
 
@@ -105,7 +106,8 @@ function closeAllSelect(elmnt) {
 
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
-checkpointSelect.addEventListener("change", () => {selectCkpt(this.value)});
+checkpointSelect.addEventListener("change", selectCkpt);
 uploadBtn.addEventListener("click", () => {transcribeAudio(taskSelect.value)});
+
 
 
