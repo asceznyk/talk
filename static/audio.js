@@ -1,10 +1,17 @@
 const uploadBtn = document.getElementById("upload");
+const checkpointSelect = document.getElementById("checkpoint");
 const taskSelect = document.getElementById("task");
 const audioInp = document.getElementById("audio");
 const audioPlayer = document.getElementById("player");
 const transcriptDiv = document.getElementById("transcript");
 
 console.log('welcome to talk!')
+
+async function selectCkpt() {
+	let formData = new FormData();
+	formData.append("checkpoint", this.value);
+	let result = await fetch('/checkpoint/', {method:"POST", body:formData});	
+}
 
 async function transcribeAudio(task) {
 	transcriptDiv.innerHTML = `transcribing...`
@@ -70,17 +77,6 @@ function customSelect(className) {
 			this.nextSibling.classList.toggle("select-hide");
 			this.classList.toggle("select-arrow-active");
 		});
-
-		let selectSelected = document.getElementsByClassName("select-selected")[0];
-		let selectItems = document.getElementsByClassName("select-items")[0];
-
-		if(selectItems.classList.value == "select-items") {
-			selectSelected.style.borderBottom = "none"
-			selectItems.style.borderTop = "none"
-		} else {
-			selectSelected.style.borderBottom = "1px solid"
-			selectItems.style.borderTop = "1px solid";
-		}
 	}
 }
 
@@ -104,9 +100,9 @@ function closeAllSelect(elmnt) {
   }
 }
 
-customSelect("selecttask");
+customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
+checkpointSelect.addEventListener("change", selectCkpt);
 uploadBtn.addEventListener("click", () => {transcribeAudio(taskSelect.value)});
-
 
 

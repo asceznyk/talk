@@ -12,7 +12,17 @@
             <p>for now we are supporting audio files which are <= 30 seconds, please note that any large audio file will be trimmed down to the first 30 seconds and then transcribed</p>
         </div>
         <div class="design">
-            <div class="selecttask">
+            <p>Checkpoint:</p>
+            <div class="selectopts">
+                <select id="checkpoint" name="checkpoint">
+                    <option value="tiny">tiny</option>
+                    <option value="base">base</option>
+                    <option value="medium">medium</option>
+                    <option value="large">large</option>
+                </select>
+            </div>
+            <p>Task:</p>
+            <div class="selectopts">
                 <select id="task" name="task">
                     <option value="transcribe">transcribe</option>
                     <option value="translate">translate</option>
