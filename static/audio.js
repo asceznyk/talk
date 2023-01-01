@@ -1,4 +1,5 @@
 const uploadBtn = document.getElementById("upload");
+const checkpointSelect = document.getElementById("checkpoint");
 const taskSelect = document.getElementById("task");
 const audioInp = document.getElementById("audio");
 const audioPlayer = document.getElementById("player");
@@ -61,8 +62,8 @@ function customSelect(className) {
 							for (k = 0; k < yl; k++) {
 								y[k].removeAttribute("class");
 							}
-							this.setAttribute("class", "same-as-selected");	
-							selectCkpt(this.innerHTML);
+							this.setAttribute("class", "same-as-selected");
+							s.fireEvent("change");
 							break;
 						}
 					}
@@ -102,6 +103,7 @@ function closeAllSelect(elmnt) {
 
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
+checkpointSelect.addEventListener("change", () => {selectCkpt(this.value)});
 uploadBtn.addEventListener("click", () => {transcribeAudio(taskSelect.value)});
 
 
