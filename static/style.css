@@ -105,6 +105,15 @@ html, body {
 	margin-bottom:10px;
 }
 
+.design>div {
+	margin-bottom:15px
+}
+
+.design>div>p {
+	margin-top:5px;
+	margin-bottom:5px
+}
+
 .header a {
 	color:#C05761;
 }
@@ -158,3 +167,4 @@ html, body {
 
 
  
+
