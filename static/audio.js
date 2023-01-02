@@ -9,6 +9,12 @@ const transcriptDiv = document.getElementById("transcript");
 const audioClass = "audio-player";
 const audioPlayer = document.querySelector(`.${audioClass}`);	
 
+const playBtn = audioPlayer.querySelector(".controls .toggle-play");
+const timeline = audioPlayer.querySelector(".timeline");
+const progressBar = audioPlayer.querySelector(".progress");
+const volumeBtn = audioPlayer.querySelector(".volume-button");
+const volumeEl = audioPlayer.querySelector(".volume-container .volume");
+
 console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
@@ -135,14 +141,12 @@ function customAudioPlayer(className, audio) {
 			false
 		);
 
-		const timeline = audioPlayer.querySelector(".timeline");
 		timeline.addEventListener("click", e => {
 			const timelineWidth = window.getComputedStyle(timeline).width;
 			const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
 			audio.currentTime = timeToSeek;
 		}, false);
 
-		const playBtn = audioPlayer.querySelector(".controls .toggle-play");
 		playBtn.addEventListener(
 			"click",
 			() => {
@@ -159,8 +163,7 @@ function customAudioPlayer(className, audio) {
 			false
 		);
 
-		audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
-			const volumeEl = audioPlayer.querySelector(".volume-container .volume");
+		volumeBtn.addEventListener("click", () => {	
 			audio.muted = !audio.muted;
 			if (audio.muted) {
 				volumeEl.classList.remove("fa-volume-up");
@@ -172,7 +175,6 @@ function customAudioPlayer(className, audio) {
 		});
 
 		setInterval(() => {
-			const progressBar = audioPlayer.querySelector(".progress");
 			progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
 			audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
 				audio.currentTime
