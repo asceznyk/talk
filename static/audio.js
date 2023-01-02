@@ -196,7 +196,10 @@ function customAudioPlayer(className, audio) {
 	}
 }
 
-customAudioPlayer("audio-player", audioTag);
+if(audioTag.src != '') {
+	customAudioPlayer("audio-player", audioTag);
+}
+
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
