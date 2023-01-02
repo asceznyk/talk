@@ -140,14 +140,6 @@ function customAudioPlayer(className, audio) {
 		audio.currentTime = timeToSeek;
 	}, false);
 
-	const volumeSlider = audioPlayer.querySelector(".controls .volume-slider");
-	volumeSlider.addEventListener('click', e => {
-		const sliderWidth = window.getComputedStyle(volumeSlider).width;
-		const newVolume = e.offsetX / parseInt(sliderWidth);
-		audio.volume = newVolume;
-		audioPlayer.querySelector(".controls .volume-percentage").style.width = newVolume * 100 + '%';
-	}, false)
-
 	setInterval(() => {
 		const progressBar = audioPlayer.querySelector(".progress");
 		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
