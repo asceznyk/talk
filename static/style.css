@@ -21,7 +21,7 @@ html, body {
 
 .audio-player .timeline {
 	background: white;
-	width: 100%;
+	width: 70%;
 	position: relative;
 	cursor: pointer;
 	height: 5px;
@@ -39,10 +39,19 @@ html, body {
 	justify-content: space-between;
 	align-items: stretch;
 }
+
 .audio-player .controls > * {
 	display: flex;
+}
+
+.audio-player .controls>.play-container, .controls>.volume-container, .controls>.time {
 	justify-content: center;
 	align-items: center;
+} 
+
+.audio-player .controls>.timeline {
+	justify-content: left;
+	align-items: flex-start;
 }
 
 .audio-player .controls .toggle-play.play {
@@ -51,16 +60,13 @@ html, body {
 	left: 0;
 	height: 0;
 	width: 0;
-	border: 7px solid transparent;
-	border-left: 13px solid white;
+	border: 5px solid transparent;
+	border-left: 10px solid white;
 }
 
-.audio-player .controls .toggle-play.play:hover {
-	transform: scale(1.1);
-}
 .audio-player .controls .toggle-play.pause {
-	height: 15px;
-	width: 20px;
+	height: 10px;
+	width: 15px;
 	cursor: pointer;
 	position: relative;
 }
@@ -70,40 +76,41 @@ html, body {
 	left: 0px;
 	background: white;
 	content: "";
-	height: 15px;
-	width: 3px;
+	height: 10px;
+	width: 2px;
 }
+
 .audio-player .controls .toggle-play.pause:after {
 	position: absolute;
 	top: 0;
 	right: 8px;
 	background: white;
 	content: "";
-	height: 15px;
-	width: 3px;
+	height: 10px;
+	width: 2px;
 }
-.audio-player .controls .toggle-play.pause:hover {
-	transform: scale(1.1);
-}
+
 .audio-player .controls .time {
 	display: flex;
+	margin: auto;
 }
+
 .audio-player .controls .time > * {
 	padding: 2px;
 }
+
 .audio-player .controls .volume-container {
 	cursor: pointer;
 	position: relative;
 	z-index: 2;
 }
+
 .audio-player .controls .volume-container .volume-button {
 	height: 26px;
 	display: flex;
 	align-items: center;
 }
-.audio-player .controls .volume-container .volume-button .volume {
-	transform: scale(0.7);
-}
+
 .audio-player .controls .volume-container .volume-slider {
 	position: absolute;
 	left: 0px;
@@ -272,6 +279,7 @@ html, body {
 		width: 90vw;	
 	}
 }
+
 
 
 

@@ -169,11 +169,11 @@ function customAudioPlayer(className, audio) {
 		const volumeEl = audioPlayer.querySelector(".volume-container .volume");
 		audio.muted = !audio.muted;
 		if (audio.muted) {
-			volumeEl.classList.remove("icono-volumeMedium");
-			volumeEl.classList.add("icono-volumeMute");
+			volumeEl.classList.remove("fa fa-volume-up");
+			volumeEl.classList.add("fa fa-volume-mute");
 		} else {
-			volumeEl.classList.add("icono-volumeMedium");
-			volumeEl.classList.remove("icono-volumeMute");
+			volumeEl.classList.add("fa fa-volume-up");
+			volumeEl.classList.remove("fa fa-volume-mute");
 		}
 	});
 
