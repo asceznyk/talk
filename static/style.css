@@ -13,118 +13,115 @@ html, body {
 }
 
 .audio-player {
-	 height: 50px;
-	 width: 350px;
-	 background: #444;
-	 box-shadow: 0 0 20px 0 #000 a;
-	 font-family: arial;
-	 color: white;
-	 font-size: 0.75em;
-	 overflow: hidden;
-	 display: grid;
-	 grid-template-rows: 6px auto;
+	background: #264653;
+	color: white;
+	overflow: hidden;
+	display: grid;
 }
- .audio-player .timeline {
-	 background: white;
-	 width: 100%;
-	 position: relative;
-	 cursor: pointer;
-	 box-shadow: 0 2px 10px 0 #000 8;
+
+.audio-player .timeline {
+	background: white;
+	width: 100%;
+	position: relative;
+	cursor: pointer;
+	height: 5px;
+	margin: auto;
+	border-radius: 5px;
 }
- .audio-player .timeline .progress {
-	 background: coral;
-	 width: 0%;
-	 height: 100%;
-	 transition: 0.25s;
+.audio-player .timeline .progress {
+	background: #E9C46A;
+	width: 0%;
+	height: 100%;
+	transition: 0.25s;
 }
- .audio-player .controls {
-	 display: flex;
-	 justify-content: space-between;
-	 align-items: stretch;
-	 padding: 0 20px;
+.audio-player .controls {
+	display: flex;
+	justify-content: space-between;
+	align-items: stretch;
 }
- .audio-player .controls > * {
-	 display: flex;
-	 justify-content: center;
-	 align-items: center;
+.audio-player .controls > * {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
- .audio-player .controls .toggle-play.play {
-	 cursor: pointer;
-	 position: relative;
-	 left: 0;
-	 height: 0;
-	 width: 0;
-	 border: 7px solid #000 0;
-	 border-left: 13px solid white;
+
+.audio-player .controls .toggle-play.play {
+	cursor: pointer;
+	position: relative;
+	left: 0;
+	height: 0;
+	width: 0;
+	border: 7px solid transparent;
+	border-left: 13px solid white;
 }
- .audio-player .controls .toggle-play.play:hover {
-	 transform: scale(1.1);
+
+.audio-player .controls .toggle-play.play:hover {
+	transform: scale(1.1);
 }
- .audio-player .controls .toggle-play.pause {
-	 height: 15px;
-	 width: 20px;
-	 cursor: pointer;
-	 position: relative;
+.audio-player .controls .toggle-play.pause {
+	height: 15px;
+	width: 20px;
+	cursor: pointer;
+	position: relative;
 }
- .audio-player .controls .toggle-play.pause:before {
-	 position: absolute;
-	 top: 0;
-	 left: 0px;
-	 background: white;
-	 content: "";
-	 height: 15px;
-	 width: 3px;
+.audio-player .controls .toggle-play.pause:before {
+	position: absolute;
+	top: 0;
+	left: 0px;
+	background: white;
+	content: "";
+	height: 15px;
+	width: 3px;
 }
- .audio-player .controls .toggle-play.pause:after {
-	 position: absolute;
-	 top: 0;
-	 right: 8px;
-	 background: white;
-	 content: "";
-	 height: 15px;
-	 width: 3px;
+.audio-player .controls .toggle-play.pause:after {
+	position: absolute;
+	top: 0;
+	right: 8px;
+	background: white;
+	content: "";
+	height: 15px;
+	width: 3px;
 }
- .audio-player .controls .toggle-play.pause:hover {
-	 transform: scale(1.1);
+.audio-player .controls .toggle-play.pause:hover {
+	transform: scale(1.1);
 }
- .audio-player .controls .time {
-	 display: flex;
+.audio-player .controls .time {
+	display: flex;
 }
- .audio-player .controls .time > * {
-	 padding: 2px;
+.audio-player .controls .time > * {
+	padding: 2px;
 }
- .audio-player .controls .volume-container {
-	 cursor: pointer;
-	 position: relative;
-	 z-index: 2;
+.audio-player .controls .volume-container {
+	cursor: pointer;
+	position: relative;
+	z-index: 2;
 }
- .audio-player .controls .volume-container .volume-button {
-	 height: 26px;
-	 display: flex;
-	 align-items: center;
+.audio-player .controls .volume-container .volume-button {
+	height: 26px;
+	display: flex;
+	align-items: center;
 }
- .audio-player .controls .volume-container .volume-button .volume {
-	 transform: scale(0.7);
+.audio-player .controls .volume-container .volume-button .volume {
+	transform: scale(0.7);
 }
- .audio-player .controls .volume-container .volume-slider {
-	 position: absolute;
-	 left: -3px;
-	 top: 15px;
-	 z-index: -1;
-	 width: 0;
-	 height: 15px;
-	 background: white;
-	 box-shadow: 0 0 20px #000 a;
-	 transition: 0.25s;
+.audio-player .controls .volume-container .volume-slider {
+	position: absolute;
+	left: 0px;
+	z-index: -1;
+	width: 0;
+	height: 5px;
+	border-radius: 5px;
+	background: white;
+	transition: 0.25s;
 }
- .audio-player .controls .volume-container .volume-slider .volume-percentage {
-	 background: coral;
-	 height: 100%;
-	 width: 75%;
+.audio-player .controls .volume-container .volume-slider .volume-percentage {
+	background: #E9C46A;
+	height: 100%;
+	width: 75%;
 }
- .audio-player .controls .volume-container:hover .volume-slider {
-	 left: -123px;
-	 width: 120px;
+.audio-player .controls .volume-container:hover .volume-slider {
+	left: -123px;
+	width: 120px;
 }
 
 .header>h2, .header>p {
@@ -142,63 +139,63 @@ html, body {
 }
 
 .selectopts {
-  position: relative;
-  font-family: monospace;
+	position: relative;
+	font-family: monospace;
 }
 
 .selectopts select {
-  display: none; /*hide original SELECT element: */
+	display: none; /*hide original SELECT element: */
 }
 
 .select-selected {
-  background-color: #264653;
+	background-color: #264653;
 }
 
 .select-selected:after {
-  position: absolute;
-  content: "";
-  top: 14px;
-  right: 10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-color: #fff transparent transparent transparent;
+	position: absolute;
+	content: "";
+	top: 14px;
+	right: 10px;
+	width: 0;
+	height: 0;
+	border: 6px solid transparent;
+	border-color: #fff transparent transparent transparent;
 }
 
 .select-selected.select-arrow-active:after {
-  border-color: transparent transparent #fff transparent;
-  top: 7px;
+	border-color: transparent transparent #fff transparent;
+	top: 7px;
 }
 
 .select-items div, .select-selected {
-  color: #ffffff;
-  padding: 5px;
-  cursor: pointer;
+	color: #ffffff;
+	padding: 5px;
+	cursor: pointer;
 }
 
 .select-selected {
-  border: 1px solid;
-  border-radius: 5px;
+	border: 1px solid;
+	border-radius: 5px;
 }
 
 .select-items {
-  position: absolute;
-  background-color: #264653;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 99;
-  color:#ffffff;
-  border: 1px solid;
-  border-radius:5px;
+	position: absolute;
+	background-color: #264653;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 99;
+	color:#ffffff;
+	border: 1px solid;
+	border-radius:5px;
 }
 
 .select-hide {
-  display: none;
+	display: none;
 }
 
 .select-items div:hover, .same-as-selected {
-  background-color: rgba(0, 0, 0, 0.1);
+	background-color: rgba(0, 0, 0, 0.1);
 }
 
 .inpaudio, .transcript, .task {
@@ -281,6 +278,5 @@ html, body {
 
 
 
- 
 
 
