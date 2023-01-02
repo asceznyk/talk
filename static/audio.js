@@ -47,8 +47,7 @@ async function transcribeAudio(task) {
 			formData.append("task", task);
 			formData.append("audio", inpAudio);	
 			let result = await sendPOST('/', formData);
-			audioTag.src = URL.createObjectURL(inpAudio);
-			customAudioPlayer(audioTag);
+			audioTag.src = URL.createObjectURL(inpAudio);	
 			transcriptDiv.innerHTML = result.text	
 		} else {
 			transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
@@ -129,76 +128,74 @@ function closeAllSelect(elmnt) {
   }
 }
 
-function customAudioPlayer(audio) {
-	if (!audioPlayer.classList.contains('disabled')) {
-		audio.addEventListener(
-			"loadeddata",
-			() => {
-				timeLen.textContent = getTimeCodeFromNum(
-					audio.duration
-				);
-				audio.volume = .75;
-			},
-			false
+if (!audioPlayer.classList.contains('disabled')) {
+audio.addEventListener(
+	"loadeddata",
+	() => {
+		timeLen.textContent = getTimeCodeFromNum(
+			audio.duration
 		);
+		audio.volume = .75;
+	},
+	false
+);
 
-		timeline.addEventListener("click", e => {
-			const timelineWidth = window.getComputedStyle(timeline).width;
-			const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
-			audio.currentTime = timeToSeek;
-		}, false);
+timeline.addEventListener("click", e => {
+	const timelineWidth = window.getComputedStyle(timeline).width;
+	const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
+	audio.currentTime = timeToSeek;
+}, false);
 
-		playBtn.addEventListener(
-			"click",
-			() => {
-				if (audio.paused) {
-					playBtn.classList.remove("play");
-					playBtn.classList.add("pause");
-					audio.play();
-				} else {
-					playBtn.classList.remove("pause");
-					playBtn.classList.add("play");
-					audio.pause();
-				}
-			},
-			false
-		);
+playBtn.addEventListener(
+	"click",
+	() => {
+		if (audio.paused) {
+			playBtn.classList.remove("play");
+			playBtn.classList.add("pause");
+			audio.play();
+		} else {
+			playBtn.classList.remove("pause");
+			playBtn.classList.add("play");
+			audio.pause();
+		}
+	},
+	false
+);
 
-		volumeBtn.addEventListener("click", () => {	
-			audio.muted = !audio.muted;
-			if (audio.muted) {
-				volumeEl.classList.remove("fa-volume-up");
-				volumeEl.classList.add("fa-volume-off");
-			} else {
-				volumeEl.classList.add("fa-volume-up");
-				volumeEl.classList.remove("fa-volume-off");
-			}
-		});
-
-		setInterval(() => {
-			progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-			timeCurrent.textContent = getTimeCodeFromNum(
-				audio.currentTime
-			);
-			if (audio.currentTime >= audio.duration) {
-				playBtn.classList.remove("pause");
-				playBtn.classList.add("play");
-			}
-		}, 500);
+volumeBtn.addEventListener("click", () => {	
+	audio.muted = !audio.muted;
+	if (audio.muted) {
+		volumeEl.classList.remove("fa-volume-up");
+		volumeEl.classList.add("fa-volume-off");
+	} else {
+		volumeEl.classList.add("fa-volume-up");
+		volumeEl.classList.remove("fa-volume-off");
 	}
+});
 
-	function getTimeCodeFromNum(num) {
-		let seconds = parseInt(num);
-		let minutes = parseInt(seconds / 60);
-		seconds -= minutes * 60;
-		const hours = parseInt(minutes / 60);
-		minutes -= hours * 60;
-
-		if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
-		return `${String(hours).padStart(2, 0)}:${minutes}:${String(
-			seconds % 60
-		).padStart(2, 0)}`;
+setInterval(() => {
+	progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+	timeCurrent.textContent = getTimeCodeFromNum(
+		audio.currentTime
+	);
+	if (audio.currentTime >= audio.duration) {
+		playBtn.classList.remove("pause");
+		playBtn.classList.add("play");
 	}
+}, 500);
+}
+
+function getTimeCodeFromNum(num) {
+	let seconds = parseInt(num);
+	let minutes = parseInt(seconds / 60);
+	seconds -= minutes * 60;
+	const hours = parseInt(minutes / 60);
+	minutes -= hours * 60;
+
+	if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
+	return `${String(hours).padStart(2, 0)}:${minutes}:${String(
+		seconds % 60
+	).padStart(2, 0)}`;
 }
 
 customSelect("selectopts");
