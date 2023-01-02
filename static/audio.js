@@ -140,14 +140,6 @@ function customAudioPlayer(className, audio) {
 		audio.currentTime = timeToSeek;
 	}, false);
 
-	setInterval(() => {
-		const progressBar = audioPlayer.querySelector(".progress");
-		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-		audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
-			audio.currentTime
-		);
-	}, 500);
-
 	const playBtn = audioPlayer.querySelector(".controls .toggle-play");
 	playBtn.addEventListener(
 		"click",
@@ -177,10 +169,17 @@ function customAudioPlayer(className, audio) {
 		}
 	});
 
-	if (audio.currentTime >= audio.duration) {
-		playBtn.classList.remove("pause");
-		playBtn.classList.add("play");
-	}
+	setInterval(() => {
+		const progressBar = audioPlayer.querySelector(".progress");
+		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+		audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
+			audio.currentTime
+		);
+		if (audio.currentTime >= audio.duration) {
+			playBtn.classList.remove("pause");
+			playBtn.classList.add("play");
+		}
+	}, 500);
 
 	function getTimeCodeFromNum(num) {
 		let seconds = parseInt(num);
