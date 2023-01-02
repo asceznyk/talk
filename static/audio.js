@@ -6,6 +6,8 @@ const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
+const audioClass = "audio-player";
+
 console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
@@ -35,6 +37,7 @@ async function transcribeAudio(task) {
 			formData.append("task", task);
 			formData.append("audio", inpAudio);
 			audioTag.src = URL.createObjectURL(inpAudio);
+			customAudioPlayer(audioClass, audioTag);
 			let result = await sendPOST('/', formData);	
 			transcriptDiv.innerHTML = result.text	
 		} else {
@@ -196,10 +199,7 @@ function customAudioPlayer(className, audio) {
 	}
 }
 
-if(audioTag.src != '') {
-	customAudioPlayer("audio-player", audioTag);
-}
-
+customAudioPlayer(audioClass, audioTag);
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
