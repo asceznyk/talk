@@ -6,6 +6,20 @@ html, body {
 	font-size:13px;
 }
 
+.audio-controls {
+	width:-webkit-fill-available;
+	font-size:20px;
+	padding: 0px 10px 0px 10px;
+}
+
+.audio-controls>* {
+	display:inline-block;
+}
+
+.audio-controls>.play:before, .audio-controls>.sound:before {
+	width: max-content;
+}
+
 .wrapper {
 	margin:auto;
 	margin-top:5px;
@@ -167,4 +181,5 @@ html, body {
 
 
  
+
 
