@@ -118,7 +118,7 @@ function closeAllSelect(elmnt) {
 
 function customAudioPlayer(className) {
 	let clips, audio, a, b;
-	let controls = ['play', 'progress', 'sound'];
+	let controls = {'play':'fa fa-play', 'progress':'', 'sound':'fa fa-volume-up'};
 
 	clips = document.getElementsByClassName(className);
 	for(let i = 0; i < clips.length; i++) {
@@ -128,11 +128,12 @@ function customAudioPlayer(className) {
 		a.setAttribute("class", "audio-controls");
 		clips[i].appendChild(a);
 
-		for (let control of controls) {
+		Object.entries(controls).forEach((entry) => {
+			let [k, v] = entry
 			b = document.createElement("DIV");
-			b.setAttribute("class", control);
+			b.setAttribute("class", `${k} ${v}`);
 			a.appendChild(b);
-		}
+		})
 	}
 }
 
