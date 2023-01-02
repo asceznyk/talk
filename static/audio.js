@@ -195,7 +195,6 @@ function customAudioPlayer(className, audio) {
 	}
 }
 
-//customAudioPlayer(audioClass, audioTag);
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
