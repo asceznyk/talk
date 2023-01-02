@@ -28,16 +28,20 @@ async function selectCkpt() {
 async function transcribeAudio(task) {	
 	let inpAudio = audioInp.files[0]
 
-	if(inpAudio != null && inpAudio.type.startsWith('audio')) {
-		transcriptDiv.innerHTML = `transcribing...`
-		let formData = new FormData();
-		formData.append("task", task);
-		formData.append("audio", inpAudio);
-		audioPlayer.src = URL.createObjectURL(inpAudio);
-		let result = await sendPOST('/', formData);	
-		transcriptDiv.innerHTML = result.text	
+	if (inpAudio != null) {
+		if(inpAudio.type.startsWith('audio')) {
+			transcriptDiv.innerHTML = `transcribing...`
+			let formData = new FormData();
+			formData.append("task", task);
+			formData.append("audio", inpAudio);
+			audioPlayer.src = URL.createObjectURL(inpAudio);
+			let result = await sendPOST('/', formData);	
+			transcriptDiv.innerHTML = result.text	
+		} else {
+			transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
+		}
 	} else {
-		transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
+		transcriptDiv.innerHTML = `no files are chosen, please upload a file from your device..`
 	}
 }
 
