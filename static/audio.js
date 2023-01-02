@@ -117,7 +117,7 @@ function closeAllSelect(elmnt) {
 }
 
 function customAudioPlayer(className, audio) {
-	const audioPlayer = document.getElementsByClassName(className)	
+	const audioPlayer = document.querySelector(`.${className}`)	
 
 	audio.addEventListener(
 		"loadeddata",
