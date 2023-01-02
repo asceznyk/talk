@@ -6,14 +6,15 @@ const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
-const audioClass = "audio-player";
-const audioPlayer = document.querySelector(`.${audioClass}`);	
+const audioPlayer = document.querySelector("audio-player");	
 
 const playBtn = audioPlayer.querySelector(".controls .toggle-play");
 const timeline = audioPlayer.querySelector(".timeline");
 const progressBar = audioPlayer.querySelector(".progress");
 const volumeBtn = audioPlayer.querySelector(".volume-button");
 const volumeEl = audioPlayer.querySelector(".volume-container .volume");
+const timeLen = audioPlayer.querySelector(".time .length")
+const timeCurrent = audioPlayer.querySelector(".time .current")
 
 console.log('welcome to talk!')
 
@@ -44,10 +45,10 @@ async function transcribeAudio(task) {
 			transcriptDiv.innerHTML = `transcribing...`
 			let formData = new FormData();
 			formData.append("task", task);
-			formData.append("audio", inpAudio);
-			audioTag.src = URL.createObjectURL(inpAudio);
+			formData.append("audio", inpAudio);	
 			let result = await sendPOST('/', formData);
-			customAudioPlayer(audioClass, audioTag);
+			audioTag.src = URL.createObjectURL(inpAudio);
+			customAudioPlayer(audioTag);
 			transcriptDiv.innerHTML = result.text	
 		} else {
 			transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
@@ -128,12 +129,12 @@ function closeAllSelect(elmnt) {
   }
 }
 
-function customAudioPlayer(className, audio) {
+function customAudioPlayer(audio) {
 	if (!audioPlayer.classList.contains('disabled')) {
 		audio.addEventListener(
 			"loadeddata",
 			() => {
-				audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(
+				timeLen.textContent = getTimeCodeFromNum(
 					audio.duration
 				);
 				audio.volume = .75;
@@ -176,7 +177,7 @@ function customAudioPlayer(className, audio) {
 
 		setInterval(() => {
 			progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-			audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
+			timeCurrent.textContent = getTimeCodeFromNum(
 				audio.currentTime
 			);
 			if (audio.currentTime >= audio.duration) {
