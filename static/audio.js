@@ -121,8 +121,8 @@ function customAudioPlayer(className) {
 	let controls = ['play', 'progress', 'sound'];
 
 	clips = document.getElementsByClassName(className);
-	for(let i = 0; i < clip.length; i++) {
-		audio = clip[i].getElementsByTagName("audio");
+	for(let i = 0; i < clips.length; i++) {
+		audio = clips[i].getElementsByTagName("audio");
 		
 		a = document.createElement("DIV");
 		a.setAttribute("class", "audio-controls");
