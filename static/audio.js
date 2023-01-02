@@ -170,10 +170,10 @@ function customAudioPlayer(className, audio) {
 		audio.muted = !audio.muted;
 		if (audio.muted) {
 			volumeEl.classList.remove("fa fa-volume-up");
-			volumeEl.classList.add("fa fa-volume-mute");
+			volumeEl.classList.add("fa fa-volume-off");
 		} else {
 			volumeEl.classList.add("fa fa-volume-up");
-			volumeEl.classList.remove("fa fa-volume-mute");
+			volumeEl.classList.remove("fa fa-volume-off");
 		}
 	});
 
