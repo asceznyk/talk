@@ -6,7 +6,7 @@ const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
-const audioPlayer = document.querySelector("audio-player");	
+const audioPlayer = document.querySelector(".audio-player");	
 
 const playBtn = audioPlayer.querySelector(".controls .toggle-play");
 const timeline = audioPlayer.querySelector(".timeline");
