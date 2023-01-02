@@ -7,14 +7,17 @@ const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
 const audioClass = "audio-player";
+const audioPlayer = document.querySelector(`.${audioClass}`);	
 
 console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
 	uploadBtn.disabled = true;
+	audioPlayer.classList.add("disabled");
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
 	uploadBtn.removeAttribute('disabled');
+	audioPlayer.classList.remove("disabled");
 	console.log(result)
 	return result
 }
@@ -120,66 +123,66 @@ function closeAllSelect(elmnt) {
 }
 
 function customAudioPlayer(className, audio) {
-	const audioPlayer = document.querySelector(`.${className}`)	
+	if (!audioPlayer.classList.contains('disabled')) {
+		audio.addEventListener(
+			"loadeddata",
+			() => {
+				audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(
+					audio.duration
+				);
+				audio.volume = .75;
+			},
+			false
+		);
 
-	audio.addEventListener(
-		"loadeddata",
-		() => {
-			audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(
-				audio.duration
-			);
-			audio.volume = .75;
-		},
-		false
-	);
+		const timeline = audioPlayer.querySelector(".timeline");
+		timeline.addEventListener("click", e => {
+			const timelineWidth = window.getComputedStyle(timeline).width;
+			const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
+			audio.currentTime = timeToSeek;
+		}, false);
 
-	const timeline = audioPlayer.querySelector(".timeline");
-	timeline.addEventListener("click", e => {
-		const timelineWidth = window.getComputedStyle(timeline).width;
-		const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
-		audio.currentTime = timeToSeek;
-	}, false);
+		const playBtn = audioPlayer.querySelector(".controls .toggle-play");
+		playBtn.addEventListener(
+			"click",
+			() => {
+				if (audio.paused) {
+					playBtn.classList.remove("play");
+					playBtn.classList.add("pause");
+					audio.play();
+				} else {
+					playBtn.classList.remove("pause");
+					playBtn.classList.add("play");
+					audio.pause();
+				}
+			},
+			false
+		);
 
-	const playBtn = audioPlayer.querySelector(".controls .toggle-play");
-	playBtn.addEventListener(
-		"click",
-		() => {
-			if (audio.paused) {
-				playBtn.classList.remove("play");
-				playBtn.classList.add("pause");
-				audio.play();
+		audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
+			const volumeEl = audioPlayer.querySelector(".volume-container .volume");
+			audio.muted = !audio.muted;
+			if (audio.muted) {
+				volumeEl.classList.remove("fa-volume-up");
+				volumeEl.classList.add("fa-volume-off");
 			} else {
+				volumeEl.classList.add("fa-volume-up");
+				volumeEl.classList.remove("fa-volume-off");
+			}
+		});
+
+		setInterval(() => {
+			const progressBar = audioPlayer.querySelector(".progress");
+			progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+			audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
+				audio.currentTime
+			);
+			if (audio.currentTime >= audio.duration) {
 				playBtn.classList.remove("pause");
 				playBtn.classList.add("play");
-				audio.pause();
 			}
-		},
-		false
-	);
-
-	audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
-		const volumeEl = audioPlayer.querySelector(".volume-container .volume");
-		audio.muted = !audio.muted;
-		if (audio.muted) {
-			volumeEl.classList.remove("fa-volume-up");
-			volumeEl.classList.add("fa-volume-off");
-		} else {
-			volumeEl.classList.add("fa-volume-up");
-			volumeEl.classList.remove("fa-volume-off");
-		}
-	});
-
-	setInterval(() => {
-		const progressBar = audioPlayer.querySelector(".progress");
-		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-		audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
-			audio.currentTime
-		);
-		if (audio.currentTime >= audio.duration) {
-			playBtn.classList.remove("pause");
-			playBtn.classList.add("play");
-		}
-	}, 500);
+		}, 500);
+	}
 
 	function getTimeCodeFromNum(num) {
 		let seconds = parseInt(num);
