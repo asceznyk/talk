@@ -19,25 +19,22 @@ async function sendPOST(url, formData) {
 
 async function selectCkpt() {
 	statusDiv.innerHTML = `loading checkpoint..`
-
 	let formData = new FormData();
 	formData.append("checkpoint", this.value);
-	let result = await sendPOST('/checkpoint/', formData);
-	
+	let result = await sendPOST('/checkpoint/', formData);	
 	statusDiv.innerHTML = result.status	
 }
 
-async function transcribeAudio(task) {
-	transcriptDiv.innerHTML = `transcribing...`
-
-	let formData = new FormData();
+async function transcribeAudio(task) {	
 	let inpAudio = audioInp.files[0]
 
-	if (inpAudio.type.startsWith('audio')) {
+	if(inpAudio != null && inpAudio.type.startsWith('audio')) {
+		transcriptDiv.innerHTML = `transcribing...`
+		let formData = new FormData();
 		formData.append("task", task);
 		formData.append("audio", inpAudio);
 		audioPlayer.src = URL.createObjectURL(inpAudio);
-		let result = await sendPOST('/', formData);
+		let result = await sendPOST('/', formData);	
 		transcriptDiv.innerHTML = result.text	
 	} else {
 		transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
