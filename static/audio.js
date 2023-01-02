@@ -177,6 +177,11 @@ function customAudioPlayer(className, audio) {
 		}
 	});
 
+	if (audio.currentTime >= audio.duration) {
+		playBtn.classList.remove("pause");
+		playBtn.classList.add("play");
+	}
+
 	function getTimeCodeFromNum(num) {
 		let seconds = parseInt(num);
 		let minutes = parseInt(seconds / 60);
