@@ -37,8 +37,8 @@ async function transcribeAudio(task) {
 			formData.append("task", task);
 			formData.append("audio", inpAudio);
 			audioTag.src = URL.createObjectURL(inpAudio);
+			let result = await sendPOST('/', formData);
 			customAudioPlayer(audioClass, audioTag);
-			let result = await sendPOST('/', formData);	
 			transcriptDiv.innerHTML = result.text	
 		} else {
 			transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
