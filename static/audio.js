@@ -117,7 +117,7 @@ function closeAllSelect(elmnt) {
 }
 
 function customAudioPlayer(className, audio) {
-	const audioPlayer = document.querySelector(className)	
+	const audioPlayer = document.getElementsByClassName(className)	
 
 	audio.addEventListener(
 		"loadeddata",
@@ -196,7 +196,7 @@ function customAudioPlayer(className, audio) {
 	}
 }
 
-customAudioPlayer(".audio-player", audioTag);
+customAudioPlayer("audio-player", audioTag);
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
