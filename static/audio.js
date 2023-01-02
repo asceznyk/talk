@@ -116,6 +116,27 @@ function closeAllSelect(elmnt) {
   }
 }
 
+function customAudioPlayer(className) {
+	let clips, audio, a, b;
+	let controls = ['play', 'progress', 'sound'];
+
+	clips = document.getElementsByClassName(className);
+	for(let i = 0; i < clip.length; i++) {
+		audio = clip[i].getElementsByTagName("audio");
+		
+		a = document.createElement("DIV");
+		a.setAttribute("class", "audio-controls");
+		clips[i].appendChild(a);
+
+		for (let control of controls) {
+			b = document.createElement("DIV");
+			b.setAttribute("class", control);
+			a.appendChild(b);
+		}
+	}
+}
+
+customAudioPlayer("clip");
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
