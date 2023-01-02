@@ -2,7 +2,7 @@ const uploadBtn = document.getElementById("upload");
 const checkpointSelect = document.getElementById("checkpoint");
 const taskSelect = document.getElementById("task");
 const audioInp = document.getElementById("audio");
-const audioPlayer = document.getElementById("player");
+const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
@@ -34,7 +34,7 @@ async function transcribeAudio(task) {
 			let formData = new FormData();
 			formData.append("task", task);
 			formData.append("audio", inpAudio);
-			audioPlayer.src = URL.createObjectURL(inpAudio);
+			audioTag.src = URL.createObjectURL(inpAudio);
 			let result = await sendPOST('/', formData);	
 			transcriptDiv.innerHTML = result.text	
 		} else {
@@ -116,28 +116,87 @@ function closeAllSelect(elmnt) {
   }
 }
 
-function customAudioPlayer(className) {
-	let clips, audio, a, b;
-	let controls = {'play':'fa fa-play', 'progress':'', 'sound':'fa fa-volume-up'};
+function customAudioPlayer(className, audio) {
+	const audioPlayer = document.querySelector(className)	
 
-	clips = document.getElementsByClassName(className);
-	for(let i = 0; i < clips.length; i++) {
-		audio = clips[i].getElementsByTagName("audio");
-		
-		a = document.createElement("DIV");
-		a.setAttribute("class", "audio-controls");
-		clips[i].appendChild(a);
+	audio.addEventListener(
+		"loadeddata",
+		() => {
+			audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(
+				audio.duration
+			);
+			audio.volume = .75;
+		},
+		false
+	);
 
-		Object.entries(controls).forEach((entry) => {
-			let [k, v] = entry
-			b = document.createElement("DIV");
-			b.setAttribute("class", `${k} ${v}`);
-			a.appendChild(b);
-		})
+	const timeline = audioPlayer.querySelector(".timeline");
+	timeline.addEventListener("click", e => {
+		const timelineWidth = window.getComputedStyle(timeline).width;
+		const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
+		audio.currentTime = timeToSeek;
+	}, false);
+
+	const volumeSlider = audioPlayer.querySelector(".controls .volume-slider");
+	volumeSlider.addEventListener('click', e => {
+		const sliderWidth = window.getComputedStyle(volumeSlider).width;
+		const newVolume = e.offsetX / parseInt(sliderWidth);
+		audio.volume = newVolume;
+		audioPlayer.querySelector(".controls .volume-percentage").style.width = newVolume * 100 + '%';
+	}, false)
+
+	setInterval(() => {
+		const progressBar = audioPlayer.querySelector(".progress");
+		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+		audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
+			audio.currentTime
+		);
+	}, 500);
+
+	const playBtn = audioPlayer.querySelector(".controls .toggle-play");
+	playBtn.addEventListener(
+		"click",
+		() => {
+			if (audio.paused) {
+				playBtn.classList.remove("play");
+				playBtn.classList.add("pause");
+				audio.play();
+			} else {
+				playBtn.classList.remove("pause");
+				playBtn.classList.add("play");
+				audio.pause();
+			}
+		},
+		false
+	);
+
+	audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
+		const volumeEl = audioPlayer.querySelector(".volume-container .volume");
+		audio.muted = !audio.muted;
+		if (audio.muted) {
+			volumeEl.classList.remove("icono-volumeMedium");
+			volumeEl.classList.add("icono-volumeMute");
+		} else {
+			volumeEl.classList.add("icono-volumeMedium");
+			volumeEl.classList.remove("icono-volumeMute");
+		}
+	});
+
+	function getTimeCodeFromNum(num) {
+		let seconds = parseInt(num);
+		let minutes = parseInt(seconds / 60);
+		seconds -= minutes * 60;
+		const hours = parseInt(minutes / 60);
+		minutes -= hours * 60;
+
+		if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
+		return `${String(hours).padStart(2, 0)}:${minutes}:${String(
+			seconds % 60
+		).padStart(2, 0)}`;
 	}
 }
 
-customAudioPlayer("clip");
+customAudioPlayer("audio-player", audioTag);
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
