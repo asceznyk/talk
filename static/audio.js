@@ -204,7 +204,7 @@ function customAudioPlayer(audio) {
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", () => { 
-	if(!this.classList.contains('disabled')) {
+	if(!e.currentTarget.classList.contains('disabled')) {
 		selectCkpt(); 
 	}
 });
