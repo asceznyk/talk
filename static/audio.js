@@ -6,25 +6,13 @@ const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
-const audioPlayer = document.querySelector(".audio-player");	
-
-const playBtn = audioPlayer.querySelector(".controls .toggle-play");
-const timeline = audioPlayer.querySelector(".timeline");
-const progressBar = audioPlayer.querySelector(".progress");
-const volumeBtn = audioPlayer.querySelector(".volume-button");
-const volumeEl = audioPlayer.querySelector(".volume-container .volume");
-const timeLen = audioPlayer.querySelector(".time .length")
-const timeCurrent = audioPlayer.querySelector(".time .current")
-
 console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
 	uploadBtn.disabled = true;
-	audioPlayer.classList.add("disabled");
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
 	uploadBtn.removeAttribute('disabled');
-	audioPlayer.classList.remove("disabled");
 	console.log(result)
 	return result
 }
@@ -129,6 +117,15 @@ function closeAllSelect(elmnt) {
 }
 
 function customAudioPlayer(audio) {
+	const audioPlayer = document.querySelector(".audio-player");
+	const playBtn = audioPlayer.querySelector(".controls .toggle-play");
+	const timeline = audioPlayer.querySelector(".timeline");
+	const progressBar = audioPlayer.querySelector(".progress");
+	const volumeBtn = audioPlayer.querySelector(".volume-button");
+	const volumeEl = audioPlayer.querySelector(".volume-container .volume");
+	const timeLen = audioPlayer.querySelector(".time .length")
+	const timeCurrent = audioPlayer.querySelector(".time .current")
+
 	audio.addEventListener(
 		"loadeddata",
 		() => {
