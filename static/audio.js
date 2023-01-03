@@ -47,8 +47,7 @@ async function transcribeAudio(task) {
 			formData.append("task", task);
 			formData.append("audio", inpAudio);	
 			let result = await sendPOST('/', formData);
-			audioTag.src = URL.createObjectURL(inpAudio);	
-			customAudioPlayer(audioTag);
+			audioTag.src = URL.createObjectURL(inpAudio);		
 			transcriptDiv.innerHTML = result.text	
 		} else {
 			transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
@@ -129,65 +128,60 @@ function closeAllSelect(elmnt) {
   }
 }
 
-
 function customAudioPlayer(audio) {
-	if (!audioPlayer.classList.contains('disabled')) {
-		audio.addEventListener(
-			"loadeddata",
-			() => {
-				timeLen.textContent = getTimeCodeFromNum(
-					audio.duration
-				);
-				audio.volume = .75;
-			},
-			false
-		);
+	audio.addEventListener(
+		"loadeddata",
+		() => {
+			timeLen.textContent = getTimeCodeFromNum(audio.duration);
+			audio.volume = .75;
+		},
+		false
+	);
 
-		timeline.addEventListener("click", e => {
-			const timelineWidth = window.getComputedStyle(timeline).width;
-			const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
-			audio.currentTime = timeToSeek;
-		}, false);
+	timeline.addEventListener("click", e => {
+		const timelineWidth = window.getComputedStyle(timeline).width;
+		const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
+		audio.currentTime = timeToSeek;
+	}, false);
 
-		playBtn.addEventListener(
-			"click",
-			() => {
-				console.log("playBtn is clicked!")
-				if (audio.paused) {
-					playBtn.classList.remove("play");
-					playBtn.classList.add("pause");
-					audio.play();
-				} else {
-					playBtn.classList.remove("pause");
-					playBtn.classList.add("play");
-					audio.pause();
-				}
-			},
-			false
-		);
-
-		volumeBtn.addEventListener("click", () => {	
-			audio.muted = !audio.muted;
-			if (audio.muted) {
-				volumeEl.classList.remove("fa-volume-up");
-				volumeEl.classList.add("fa-volume-off");
+	playBtn.addEventListener(
+		"click",
+		() => {
+			console.log("playBtn is clicked");
+			if (audio.paused) {
+				playBtn.classList.remove("play");
+				playBtn.classList.add("pause");
+				audio.play();
 			} else {
-				volumeEl.classList.add("fa-volume-up");
-				volumeEl.classList.remove("fa-volume-off");
-			}
-		});
-
-		setInterval(() => {
-			progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-			timeCurrent.textContent = getTimeCodeFromNum(
-				audio.currentTime
-			);
-			if (audio.currentTime >= audio.duration) {
 				playBtn.classList.remove("pause");
 				playBtn.classList.add("play");
+				audio.pause();
 			}
-		}, 500);
-	}
+		},
+		false
+	);
+
+	volumeBtn.addEventListener("click", () => {	
+		audio.muted = !audio.muted;
+		if (audio.muted) {
+			volumeEl.classList.remove("fa-volume-up");
+			volumeEl.classList.add("fa-volume-off");
+		} else {
+			volumeEl.classList.add("fa-volume-up");
+			volumeEl.classList.remove("fa-volume-off");
+		}
+	});
+
+	setInterval(() => {
+		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+		timeCurrent.textContent = getTimeCodeFromNum(
+			audio.currentTime
+		);
+		if (audio.currentTime >= audio.duration) {
+			playBtn.classList.remove("pause");
+			playBtn.classList.add("play");
+		}
+	}, 500);
 
 	function getTimeCodeFromNum(num) {
 		let seconds = parseInt(num);
@@ -203,6 +197,7 @@ function customAudioPlayer(audio) {
 	}
 }
 
+customAudioPlayer(audioTag);
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
