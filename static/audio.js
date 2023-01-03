@@ -12,10 +12,10 @@ console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
 	uploadBtn.disabled = true;
-	taskSelect.classList.add("disabled");
+	checkpointSelect.classList.add("disabled");
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
-	taskSelect.remove("disabled");
+	checkpointSelect.classList.remove("disabled");
 	uploadBtn.removeAttribute('disabled');
 	console.log(result)
 	return result
