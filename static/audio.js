@@ -152,6 +152,7 @@ function customAudioPlayer(audio) {
 		playBtn.addEventListener(
 			"click",
 			() => {
+				console.log("playBtn is clicked!")
 				if (audio.paused) {
 					playBtn.classList.remove("play");
 					playBtn.classList.add("pause");
