@@ -37,7 +37,8 @@ async function transcribeAudio(task) {
 			formData.append("task", task);
 			formData.append("audio", inpAudio);	
 			let result = await sendPOST('/', formData);
-			audioTag.src = URL.createObjectURL(inpAudio);		
+			audioTag.src = URL.createObjectURL(inpAudio);	
+			pauseAudio(audioTag, playCtx);
 			transcriptDiv.innerHTML = result.text	
 		} else {
 			transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
@@ -118,6 +119,12 @@ function closeAllSelect(elmnt) {
   }
 }
 
+function pauseAudio(audio, btn) {	
+	btn.classList.remove("pause");
+	btn.classList.add("play");
+	audio.pause();
+}
+
 function customAudioPlayer(audio) {
 	const audioPlayer = document.querySelector(".audio-player");
 	const playBtn = audioPlayer.querySelector(".controls .toggle-play");
@@ -149,9 +156,7 @@ function customAudioPlayer(audio) {
 				playBtn.classList.add("pause");
 				audio.play();
 			} else {
-				playBtn.classList.remove("pause");
-				playBtn.classList.add("play");
-				audio.pause();
+				pauseAudio(audio, playBtn);
 			}
 		},
 		false
@@ -174,8 +179,7 @@ function customAudioPlayer(audio) {
 			audio.currentTime
 		);
 		if (audio.currentTime >= audio.duration) {
-			playBtn.classList.remove("pause");
-			playBtn.classList.add("play");
+			pauseAudio(audio, playBtn);
 		}
 	}, 500);
 
@@ -199,9 +203,7 @@ customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
 uploadBtn.addEventListener("click", () => {
-	playCtx.classList.remove("pause");
-	playCtx.classList.add("play");
-	audioTag.pause();
+	pauseAudio(audioTag, playCtx);
 	transcribeAudio(taskSelect.value)
 });
 
