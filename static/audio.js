@@ -81,7 +81,7 @@ function customSelect(className) {
 								y[k].removeAttribute("class");
 							}
 							this.setAttribute("class", "same-as-selected");
-							if (!x.classList.contains('disabled')) {
+							if (!x[i].classList.contains('disabled')) {
 								console.log("triggeing change..");
 								let evt = document.createEvent("HTMLEvents");
 								evt.initEvent("change", false, true);
