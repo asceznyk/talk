@@ -81,12 +81,9 @@ function customSelect(className) {
 								y[k].removeAttribute("class");
 							}
 							this.setAttribute("class", "same-as-selected");
-							if (!selElmnt.classList.contains('disabled')) {
-								console.log("triggeing change..");
-								let evt = document.createEvent("HTMLEvents");
-								evt.initEvent("change", false, true);
-								s.dispatchEvent(evt);
-							}
+							let evt = document.createEvent("HTMLEvents");
+							evt.initEvent("change", false, true);
+							s.dispatchEvent(evt);
 							break;
 						}
 					}
@@ -206,7 +203,11 @@ function customAudioPlayer(audio) {
 
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
-checkpointSelect.addEventListener("change", selectCkpt);
+checkpointSelect.addEventListener("change", () => { 
+	if(!this.classList.contains('disabled')) {
+		selectCkpt(); 
+	}
+});
 uploadBtn.addEventListener("click", () => {
 	pauseAudio(audioTag, playCtx);
 	transcribeAudio(taskSelect.value)
