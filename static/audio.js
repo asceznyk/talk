@@ -21,10 +21,10 @@ async function sendPOST(url, formData) {
 	return result
 }
 
-async function selectCkpt() {
+async function selectCkpt(e) {
 	statusDiv.innerHTML = `loading checkpoint..`
 	let formData = new FormData();
-	formData.append("checkpoint", this.value);
+	formData.append("checkpoint", e.currentTarget.value);
 	let result = await sendPOST('/checkpoint/', formData);	
 	statusDiv.innerHTML = result.status	
 }
@@ -205,7 +205,7 @@ customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", (e) => { 
 	if(!e.currentTarget.classList.contains('disabled')) {
-		selectCkpt(); 
+		selectCkpt(e); 
 	}
 });
 uploadBtn.addEventListener("click", () => {
