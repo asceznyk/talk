@@ -12,8 +12,10 @@ console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
 	uploadBtn.disabled = true;
+	taskSelect.classList.add("disabled");
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
+	taskSelect.remove("disabled");
 	uploadBtn.removeAttribute('disabled');
 	console.log(result)
 	return result
@@ -79,9 +81,12 @@ function customSelect(className) {
 								y[k].removeAttribute("class");
 							}
 							this.setAttribute("class", "same-as-selected");
-							let evt = document.createEvent("HTMLEvents");
-							evt.initEvent("change", false, true);
-							s.dispatchEvent(evt);
+							if (!x.classList.contains('disabled')) {
+								console.log("triggeing change..");
+								let evt = document.createEvent("HTMLEvents");
+								evt.initEvent("change", false, true);
+								s.dispatchEvent(evt);
+							}
 							break;
 						}
 					}
