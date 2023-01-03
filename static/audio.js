@@ -6,6 +6,8 @@ const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
+const playCtx = customAudioPlayer(audioTag);
+
 console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
@@ -122,14 +124,12 @@ function customAudioPlayer(audio) {
 	const timeline = audioPlayer.querySelector(".timeline");
 	const progressBar = audioPlayer.querySelector(".progress");
 	const volumeBtn = audioPlayer.querySelector(".volume-button");
-	const volumeEl = audioPlayer.querySelector(".volume-container .volume");
-	const timeLen = audioPlayer.querySelector(".time .length")
-	const timeCurrent = audioPlayer.querySelector(".time .current")
+	const volumeEl = audioPlayer.querySelector(".volume-container .volume"); 
 
 	audio.addEventListener(
 		"loadeddata",
 		() => {
-			timeLen.textContent = getTimeCodeFromNum(audio.duration);
+			audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(audio.duration);
 			audio.volume = .75;
 		},
 		false
@@ -144,7 +144,6 @@ function customAudioPlayer(audio) {
 	playBtn.addEventListener(
 		"click",
 		() => {
-			console.log("playBtn is clicked");
 			if (audio.paused) {
 				playBtn.classList.remove("play");
 				playBtn.classList.add("pause");
@@ -171,7 +170,7 @@ function customAudioPlayer(audio) {
 
 	setInterval(() => {
 		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-		timeCurrent.textContent = getTimeCodeFromNum(
+		audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
 			audio.currentTime
 		);
 		if (audio.currentTime >= audio.duration) {
@@ -192,13 +191,19 @@ function customAudioPlayer(audio) {
 			seconds % 60
 		).padStart(2, 0)}`;
 	}
+
+	return playBtn;
 }
 
-customAudioPlayer(audioTag);
 customSelect("selectopts");
 document.addEventListener("click", closeAllSelect);
 checkpointSelect.addEventListener("change", selectCkpt);
-uploadBtn.addEventListener("click", () => {transcribeAudio(taskSelect.value)});
+uploadBtn.addEventListener("click", () => {
+	playCtx.classList.remove("pause");
+	playCtx.classList.add("play");
+	audioTag.pause();
+	transcribeAudio(taskSelect.value)
+});
 
 
 
