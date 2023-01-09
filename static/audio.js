@@ -10,6 +10,8 @@ let allChunks = [];
 let allTexts = [];
 let stopped = 0;
 
+let guid = window.navigator.userAgent.replace(/\D+/g, '');
+
 console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
