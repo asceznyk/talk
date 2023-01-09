@@ -11,7 +11,6 @@ from torch import Tensor
 
 from torch.nn import LayerNorm, Linear, Conv1d
 
-# from .transcribe import transcribe as transcribe_function
 from .decoding import detect_language as detect_language_function, decode as decode_function 
 
 @dataclass
