@@ -54,7 +54,9 @@ def main_page():
             to_annotate_wav = to_annotate.replace('webm', 'wav')
             webm.export(to_annotate_wav, format='wav')
             options = DecodingOptions(task=request.form.get('task'))
-            mel = pad_or_trim(log_mel_spec(to_annotate_wav), length=2*model.dims.n_audio_ctx) 
+            mel = log_mel_spec(to_annotate_wav) 
+            mel = pad_or_trim(audio, length=2*model.dims.n_audio_ctx) 
+            print(f"input audio shape: {mel.shape}")
             result = model.decode(mel, options)
             text, language = result.text, result.language
             print(text, language)

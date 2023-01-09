@@ -6,6 +6,9 @@ const transcriptDiv = document.getElementById("transcript");
 
 const audioPlayer = document.querySelector(".audio-player");
 
+let startBtn = document.getElementById("start");
+let stopBtn = document.getElementById("stop");
+
 let allChunks = [];
 let allTexts = [];
 let stopped = 0;
@@ -105,12 +108,8 @@ function closeAllSelect(elmnt) {
 function pauseAudio(audio, btn) {	
 	btn.classList.remove("pause");
 	btn.classList.add("play");
-	audio.pause();
-}
-
-function pauseAudio(audio, btn) {	
-	btn.classList.remove("pause");
-	btn.classList.add("play");
+	startBtn.removeAttribute("disabled");
+	stopBtn.removeAttribute("disabled");
 	audio.pause();
 }
 
@@ -126,6 +125,8 @@ function customAudioPlayer(audio) {
 				if (audio.paused) {
 					playBtn.classList.remove("play");
 					playBtn.classList.add("pause");
+					startBtn.disabled = true;
+					stopBtn.disabled = true;
 					audio.play();
 				} else {
 					pauseAudio(audio, playBtn);
@@ -160,8 +161,6 @@ function customAudioPlayer(audio) {
 
 function liveAudioSpeechRecognition(audio) {
 	let sidx = 0;
-	let startBtn = document.getElementById("start");
-	let stopBtn = document.getElementById("stop");
 
 	if (navigator.mediaDevices) {
 		navigator.mediaDevices.getUserMedia({audio: true})
