@@ -167,20 +167,20 @@ function liveAudioSpeechRecognition(audio) {
 				allChunks = [];
 				allTexts = [];
 				audio.src = "";
-				transcriptDiv.innerHTML = `<span>Re-annotating..</span>`;
+				transcriptDiv.innerHTML = `<span>annotating..</span>`;
 				console.log('start recording');
 				stopped = 0;
 				mediaRecorder.start();
 				startBtn.style.background = "red";
-				record.style.color = "white";
+				startBtn.style.color = "white";
 			}
 
 			stopBtn.onclick = (e) => {
 				console.log('stop recording');
 				stopped = 1;
 				mediaRecorder.stop();
-				record.style.background = "";
-				record.style.color = "black";	
+				startBtn.style.background = "";
+				startBtn.style.color = "black";	
 				audio.src = URL.createObjectURL(new Blob(allChunks))
 			}
 
