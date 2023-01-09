@@ -38,7 +38,7 @@ async function selectCkpt(e) {
 function addLanguages() {
 	Object.keys(allLanguages).forEach(function(key) {
 		let op = document.createElement("option");
-		op.innerHTML = data[key];
+		op.innerHTML = allLanguages[key];
 		op.value = key;
 		langSelect.appendChild(op);
 	});	
