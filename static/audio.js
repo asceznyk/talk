@@ -22,7 +22,7 @@ function toggleButtons(disabled) {
 	let buttons = document.getElementsByTagName("button");
 	for(let i = 0; i < buttons.length; i++) {
 		console.log(buttons[i].attributes.name);
-		if(disabled && !buttons[i].attributes.name == "keepdisabled") {
+		if(disabled && !(buttons[i].attributes.name == "keepdisabled")) {
 			buttons[i].removeAttribute("disabled");
 			buttons[i].name = "";
 		} else {
