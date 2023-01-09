@@ -153,7 +153,7 @@ function customAudioPlayer(audio) {
 }
 
 function liveAudioSpeechRecognition(audio) {	
-	let recordBtn = document.getElementById("record");
+	let startBtn = document.getElementById("start");
 	let stopBtn = document.getElementById("stop");
 
 	if (navigator.mediaDevices) {
@@ -163,7 +163,7 @@ function liveAudioSpeechRecognition(audio) {
 				mimeType: 'audio/webm; codecs=opus'
 			})
 
-			recordBtn.onclick = () => {
+			startBtn.onclick = () => {
 				allChunks = [];
 				allTexts = [];
 				audio.src = "";
@@ -171,7 +171,7 @@ function liveAudioSpeechRecognition(audio) {
 				console.log('start recording');
 				stopped = 0;
 				mediaRecorder.start();
-				recordBtn.style.background = "red";
+				startBtn.style.background = "red";
 				record.style.color = "white";
 			}
 
