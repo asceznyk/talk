@@ -24,7 +24,7 @@ function toggleButtons(disabled) {
 		console.log(buttons[i].attributes.name);
 		if(disabled && !(buttons[i].attributes.name == "keepdisabled")) {
 			buttons[i].removeAttribute("disabled");
-			buttons[i].name = "";
+			buttons[i].removeAttribute("name");
 		} else {
 			buttons[i].disabled = true;
 		}
