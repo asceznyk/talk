@@ -21,11 +21,10 @@ console.log('welcome to talk!')
 function toggleButtons(disabled) {
 	let buttons = document.getElementsByTagName("button");
 	for(let i = 0; i < buttons.length; i++) {
-		console.log(buttons[i].attributes.name);
 		if(disabled && !(buttons[i].attributes.name == "keepdisabled")) {
 			buttons[i].removeAttribute("disabled");
 			buttons[i].removeAttribute("name");
-		} else {
+		} else if (!disabled && !(buttons[i].attributes.name == "keepenabled")) {
 			buttons[i].disabled = true;
 		}
 	}
@@ -206,6 +205,7 @@ function liveAudioSpeechRecognition(audio) {
 				startBtn.style.color = "white";
 				startBtn.disabled = true;
 				startBtn.setAttribute("name", "keepdisabled");
+				stopBtn.setAttribute("name", "keepenabled");
 				audioPlayer.classList.add("disabled");
 			}
 
@@ -218,6 +218,7 @@ function liveAudioSpeechRecognition(audio) {
 				startBtn.style.color = "black";	
 				startBtn.removeAttribute("disabled");
 				startBtn.removeAttribute("name");
+				stopBtn.removeAttribute("name");
 				audioPlayer.classList.remove("disabled");
 			}
 
