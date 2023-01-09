@@ -36,7 +36,7 @@ async function selectCkpt(e) {
 }
 
 function addLanguages() {
-	fetch("languages.json")
+	fetch("talk/languages.json")
 		.then(response => response.json())
 		.then(data => {
 			Object.keys(data).forEach(function(key) {
