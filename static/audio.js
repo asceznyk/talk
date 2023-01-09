@@ -25,14 +25,10 @@ function toggleButtons(disabled) {
 		let button = buttons[i];
 		if(disabled) {
 			button.removeAttribute("disabled")
-			if (button.attributes.name.value == "keepdisabled") {
-				button.disabled = true;
-			}
+			if (button.attributes.name && button.attributes.name.value == "keepdisabled") button.disabled = true;
 		} else {
 			button.disabled = true;
-			if(button.attributes.name.value == "keepenabled") {
-				button.removeAttribute("disabled")
-			}
+			if(button.attributes.name && button.attributes.name.value == "keepenabled") button.removeAttribute("disabled")
 		}
 	}
 }
@@ -224,8 +220,8 @@ function liveAudioSpeechRecognition(audio) {
 				startBtn.style.background = "";
 				startBtn.style.color = "black";	
 				startBtn.removeAttribute("disabled");
-				startBtn.removeAttribute("name");
-				stopBtn.removeAttribute("name");
+				startBtn.setAttribute("name", "");
+				stopBtn.setAttribute("name", "");
 				audioPlayer.classList.remove("disabled");
 			}
 
