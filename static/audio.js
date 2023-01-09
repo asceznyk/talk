@@ -19,6 +19,7 @@ let guid = window.navigator.userAgent.replace(/\D+/g, '');
 console.log('welcome to talk!')
 
 function toggleButtons(disabled) {
+	console.log('called toggleButtons!')
 	let buttons = document.getElementsByTagName("button");
 	for(let i = 0; i < buttons.length; i++) {
 		if(disabled && !(buttons[i].attributes.name == "keepdisabled")) {
