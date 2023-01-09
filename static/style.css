@@ -198,6 +198,21 @@ html, body {
 	color:#ffffff;
 	border: 1px solid;
 	border-radius:5px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	max-height: 150px;
+}
+
+.select-items::-webkit-scrollbar {
+	background:inherit;
+	border-radius:5px;
+	transition: all .25s;
+	width:8px;
+}
+
+.select-items::-webkit-scrollbar-thumb {
+	background: #FFF;
+	border-radius:5px;
 }
 
 .select-hide {
@@ -282,8 +297,6 @@ html, body {
 		width: 90vw;	
 	}
 }
-
-
 
 
 

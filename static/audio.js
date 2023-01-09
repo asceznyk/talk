@@ -215,6 +215,7 @@ function liveAudioSpeechRecognition(audio) {
 					let fd = new FormData();
 					fd.append("audio", new Blob([e.data]), `${guid}_${sidx}.webm`);
 					fd.append("task", taskSelect.value);
+					fd.append("language", langSelect.value);
 
 					console.log('resuming media and sending audio request..');
 

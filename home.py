@@ -50,12 +50,20 @@ def main_page():
         if file and allowed_file(file.filename): 
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
+
             webm = AudioSegment.from_file(to_annotate, 'webm')
             to_annotate_wav = to_annotate.replace('webm', 'wav')
             webm.export(to_annotate_wav, format='wav')
-            options = DecodingOptions(task=request.form.get('task'))
+            
+            options = DecodingOptions(
+                task = request.form['task'], 
+                language = request.form['language']
+            )
+            print(f"input options task={options.task}, language={options.language}")
+            
             mel = log_mel_spec(to_annotate_wav) 
-            mel = pad_or_trim(audio, length=2*model.dims.n_audio_ctx) 
+            mel = pad_or_trim(mel, length=2*model.dims.n_audio_ctx) 
+            
             print(f"input audio shape: {mel.shape}")
             result = model.decode(mel, options)
             text, language = result.text, result.language
