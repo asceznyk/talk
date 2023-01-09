@@ -24,11 +24,15 @@ function toggleButtons(disabled) {
 	for(let i = 0; i < buttons.length; i++) {
 		let button = buttons[i];
 		if(disabled) {
-			button.removeAttribute("disabled");
-			if (button.attributes.name == "keepdisabled") button.disabled = true;
+			button.removeAttribute("disabled")
+			if (button.attributes.name == "keepdisabled") {
+				button.disabled = true;
+			}
 		} else {
 			button.disabled = true;
-			if (button.attributes.name == "keepenabled") button.removeAttribute("disabled");
+			if(button.attributes.name == "keepenabled") {
+				button.removeAttribute("disabled")
+			}
 		}
 	}
 }
