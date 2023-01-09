@@ -18,7 +18,7 @@ async function sendPOST(url, formData) {
 	checkpointSelect.classList.add("disabled");
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
-	checkpointSelect.classList.remove("disabled");
+	audioPlayer.classList.remove("disabled");
 	console.log(result)
 	return result
 }
@@ -122,25 +122,29 @@ function customAudioPlayer(audio) {
 
 	playBtn.addEventListener(
 		"click", () => {
-			if (audio.paused) {
-				playBtn.classList.remove("play");
-				playBtn.classList.add("pause");
-				audio.play();
-			} else {
-				pauseAudio(audio, playBtn);
-			}	
+			if (!audioPlayer.classList.contains('disabled')) {
+				if (audio.paused) {
+					playBtn.classList.remove("play");
+					playBtn.classList.add("pause");
+					audio.play();
+				} else {
+					pauseAudio(audio, playBtn);
+				}	
+			}
 		},
 		false
 	);
 
-	volumeBtn.addEventListener("click", () => {	
-		audio.muted = !audio.muted;
-		if (audio.muted) {
-			volumeEl.classList.remove("fa-volume-up");
-			volumeEl.classList.add("fa-volume-off");
-		} else {
-			volumeEl.classList.add("fa-volume-up");
-			volumeEl.classList.remove("fa-volume-off");
+	volumeBtn.addEventListener("click", () => {
+		if (!audioPlayer.classList.contains('disabled')) {
+			audio.muted = !audio.muted;
+			if (audio.muted) {
+				volumeEl.classList.remove("fa-volume-up");
+				volumeEl.classList.add("fa-volume-off");
+			} else {
+				volumeEl.classList.add("fa-volume-up");
+				volumeEl.classList.remove("fa-volume-off");
+			}
 		}
 	});
 
@@ -167,15 +171,16 @@ function liveAudioSpeechRecognition(audio) {
 			})
 
 			startBtn.onclick = () => {
+				console.log('start recording');
 				allChunks = [];
 				allTexts = [];
 				audio.src = "";
 				transcriptDiv.innerHTML = `<span>annotating..</span>`;
-				console.log('start recording');
 				stopped = 0;
 				mediaRecorder.start();
 				startBtn.style.background = "red";
 				startBtn.style.color = "white";
+				audioPlayer.classList.add("disabled");
 			}
 
 			stopBtn.onclick = (e) => {
@@ -185,6 +190,7 @@ function liveAudioSpeechRecognition(audio) {
 				startBtn.style.background = "";
 				startBtn.style.color = "black";	
 				audio.src = URL.createObjectURL(new Blob(allChunks))
+				audioPlayer.classList.remove("disabled");
 			}
 
 			setInterval(function() { 
@@ -231,6 +237,8 @@ checkpointSelect.addEventListener("change", (e) => {
 		selectCkpt(e); 
 	}
 });
+
+
 
 
 
