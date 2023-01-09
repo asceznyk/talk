@@ -267,6 +267,7 @@ html, body {
 	text-align:center;
 	background:#E9C46A;
 	cursor:pointer;
+	outline:none;
 }
 
 .btn:hover {
