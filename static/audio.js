@@ -154,7 +154,8 @@ function customAudioPlayer(audio) {
 	}
 }
 
-function liveAudioSpeechRecognition(audio) {	
+function liveAudioSpeechRecognition(audio) {
+	let sidx = 0;
 	let startBtn = document.getElementById("start");
 	let stopBtn = document.getElementById("stop");
 
@@ -188,7 +189,8 @@ function liveAudioSpeechRecognition(audio) {
 
 			setInterval(function() { 
 				if(mediaRecorder.state == "recording") {
-					mediaRecorder.stop();	
+					mediaRecorder.stop();
+					sidx++;
 				}	
 			}, 2000);
 
@@ -196,7 +198,7 @@ function liveAudioSpeechRecognition(audio) {
 				allChunks.push(e.data);
 				if (!stopped) {
 					let fd = new FormData();
-					fd.append("audio", new Blob([e.data]), `${guid}.webm`);
+					fd.append("audio", new Blob([e.data]), `${guid}_${sidx}.webm`);
 					fd.append("task", taskSelect.value);
 
 					console.log('resuming media and sending audio request..');
