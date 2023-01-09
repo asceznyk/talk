@@ -22,11 +22,13 @@ function toggleButtons(disabled) {
 	console.log('called toggleButtons!')
 	let buttons = document.getElementsByTagName("button");
 	for(let i = 0; i < buttons.length; i++) {
-		if(disabled && !(buttons[i].attributes.name == "keepdisabled")) {
-			buttons[i].removeAttribute("disabled");
-			buttons[i].removeAttribute("name");
-		} else if (!disabled && !(buttons[i].attributes.name == "keepenabled")) {
-			buttons[i].disabled = true;
+		let button = buttons[i];
+		if(disabled) {
+			button.removeAttribute("disabled");
+			if (button.attributes.name == "keepdisabled") button.disabled = true;
+		} else {
+			button.disabled = true;
+			if (button.attributes.name == "keepenabled") button.removeAttribute("disabled");
 		}
 	}
 }
