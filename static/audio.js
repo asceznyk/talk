@@ -21,21 +21,22 @@ console.log('welcome to talk!')
 function toggleButtons(disabled) {
 	let buttons = document.getElementsByTagName("button");
 	for(let i = 0; i < buttons.length; i++) {
-		if(disabled) {
+		if(disabled && !buttons[i].attributes.name == "keepdisabled") {
 			buttons[i].removeAttribute("disabled");
+			buttons[i].name = "";
 		} else {
 			buttons[i].disabled = true;
 		}
 	}
 }
 
-async function sendPOST(url, formData, keepDisabled=false) {
+async function sendPOST(url, formData) {
 	checkpointSelect.classList.add("disabled");
 	toggleButtons(false);
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
 	checkpointSelect.classList.remove("disabled");
-	if (!keepDisabled) toggleButtons(true);
+	toggleButtons(true);
 	console.log(result)
 	return result
 }
@@ -200,9 +201,10 @@ function liveAudioSpeechRecognition(audio) {
 				transcriptDiv.innerHTML = `<span>annotating..</span>`;
 				stopped = 0;
 				mediaRecorder.start();
-				startBtn.style.background = "red";
+				startBtn.style.background = "#C05761";
 				startBtn.style.color = "white";
 				startBtn.disabled = true;
+				startBtn.setAttribute("name", "keepdisabled");
 				audioPlayer.classList.add("disabled");
 			}
 
@@ -214,6 +216,7 @@ function liveAudioSpeechRecognition(audio) {
 				startBtn.style.background = "";
 				startBtn.style.color = "black";	
 				startBtn.removeAttribute("disabled");
+				startBtn.removeAttribute("name");
 				audioPlayer.classList.remove("disabled");
 			}
 
@@ -236,7 +239,7 @@ function liveAudioSpeechRecognition(audio) {
 
 					mediaRecorder.start();
 
-					let result = await sendPOST("/", fd, true);
+					let result = await sendPOST("/", fd);
 					let text = result.text;
 					if(!text.includes('err_msg')) {
 						allTexts.push(text);
