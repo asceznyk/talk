@@ -18,11 +18,24 @@ let guid = window.navigator.userAgent.replace(/\D+/g, '');
 
 console.log('welcome to talk!')
 
-async function sendPOST(url, formData) {
+function toggleButtons(disabled) {
+	let buttons = document.getElementsByTagName("button");
+	for(let i = 0; let i < buttons.length; i++) {
+		if(disabled) {
+			buttons[i].removeAttribute("disabled");
+		} else {
+			buttons[i].disabled = true;
+		}
+	}
+}
+
+async function sendPOST(url, formData, keepDisabled=false) {
 	checkpointSelect.classList.add("disabled");
+	toggleButtons(false);
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
-	audioPlayer.classList.remove("disabled");
+	checkpointSelect.classList.remove("disabled");
+	if (!keepDisabled) toggleButtons(true);
 	console.log(result)
 	return result
 }
@@ -189,6 +202,7 @@ function liveAudioSpeechRecognition(audio) {
 				mediaRecorder.start();
 				startBtn.style.background = "red";
 				startBtn.style.color = "white";
+				startBtn.disabled = true;
 				audioPlayer.classList.add("disabled");
 			}
 
@@ -196,9 +210,10 @@ function liveAudioSpeechRecognition(audio) {
 				console.log('stop recording');
 				stopped = 1;
 				mediaRecorder.stop();
+				audio.src = URL.createObjectURL(new Blob(allChunks));
 				startBtn.style.background = "";
 				startBtn.style.color = "black";	
-				audio.src = URL.createObjectURL(new Blob(allChunks))
+				startBtn.removeAttribute("disabled");
 				audioPlayer.classList.remove("disabled");
 			}
 
@@ -221,7 +236,7 @@ function liveAudioSpeechRecognition(audio) {
 
 					mediaRecorder.start();
 
-					let result = await sendPOST("/", fd);
+					let result = await sendPOST("/", fd, true);
 					let text = result.text;
 					if(!text.includes('err_msg')) {
 						allTexts.push(text);
