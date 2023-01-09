@@ -9,6 +9,7 @@ import numpy as np
 
 from flask import Flask, flash, render_template, request
 from pydub import AudioSegment
+from scipy.io import wavfile
 
 from talk import load_model, log_mel_spec, pad_or_trim, DecodingOptions
 
@@ -22,7 +23,7 @@ for fname in os.listdir(tempdir):
 else: 
     app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
 
-allowed_exts = {'wav', 'mp3', 'ogg'}
+allowed_exts = {'wav', 'mp3', 'ogg', 'webm'}
 base_path = "assets/tiny.pt"
 model, _ = load_model(base_path)
 
@@ -46,13 +47,15 @@ def main_page():
     if request.method == 'POST':
         language = "en"
         file = request.files['audio']
-        if file.filename == '':
-            print("No selected file!") 
         if file and allowed_file(file.filename): 
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
+            webm = AudioSegment.from_file(to_annotate, 'webm')
+            to_annotate_wav = to_annotate.replace('webm', 'wav')
+            webm.export(to_annotate_wav, format='wav')
+            _, source = wavfile.read(to_annotate_wav)
             options = DecodingOptions(task=request.form.get('task'))
-            mel = pad_or_trim(log_mel_spec(to_annotate), length=2*model.dims.n_audio_ctx) 
+            mel = pad_or_trim(log_mel_spec(source), length=2*model.dims.n_audio_ctx) 
             result = model.decode(mel, options)
             text, language = result.text, result.language
             print(text, language)
@@ -64,6 +67,6 @@ def main_page():
         return render_template('main.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
 
 

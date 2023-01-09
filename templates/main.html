@@ -11,66 +11,58 @@
     <div class="wrapper">
         <div class="header">
             <h2>Talk - a <a href="https:github.com/openai/whisper" target="_blank">Whisper</a> clone</h2>
-            <p>for now we are supporting audio files which are <= 30 seconds, please note that any large audio file will be trimmed down to the first 30 seconds and then transcribed</p>
+            <p>
+                for now we are supporting audio files which are <= 30 seconds, please note that any large audio file will be trimmed down to the first 30 seconds and then transcribed
+            </p>
         </div>
-        <div class="design">
-            <div>
-                <p>Checkpoint:</p>
-                <div class="selectopts">
-                    <select id="checkpoint" name="checkpoint">
-                        <option value="tiny">tiny</option>
-                        <option value="base">base</option>
-                        <option value="small">small</option>
-                        <option value="medium">medium</option>
-                        <option value="large">large</option>
-                    </select>
-                </div>
-                <p id="status">default: tiny</p> 
+        <div>
+            <p>Checkpoint:</p>
+            <div class="selectopts">
+                <select id="checkpoint" name="checkpoint">
+                    <option value="tiny">tiny</option>
+                    <option value="base">base</option>
+                    <option value="small">small</option>
+                    <option value="medium">medium</option>
+                    <option value="large">large</option>
+                </select>
             </div>
-            <div>
-                <p>Task:</p>
-                <div class="selectopts">
-                    <select id="task" name="task">
-                        <option value="transcribe">transcribe</option>
-                        <option value="translate">translate</option>
-                    </select>
-                </div>
+            <p id="status">default: tiny</p> 
+        </div>
+        <div>
+            <p>Task:</p>
+            <div class="selectopts">
+                <select id="task" name="task">
+                    <option value="transcribe">transcribe</option>
+                    <option value="translate">translate</option>
+                </select>
             </div>
-            <div class="recorder">
-                <p>Audio:</p>
-                <input type="file" id="audio" class="inpaudio" name="audio"/>
-                <button id="upload" class="btn">Upload audio</button>
-            </div>
-            <div class="clip">
-                <audio id="player">
-                    <source src="">
-                </audio>
-                <div class="audio-player disabled">
-                    <div class="controls">
-                        <div class="play-container"><div class="toggle-play play"></div>
-                    </div>
-                    <div class="timeline"><div class="progress"></div></div>
-                    <div class="time">
-                        <div class="current">0:00</div>
-                        <div class="divider">/</div>
-                        <div class="length"></div>
-                    </div>
+        </div>
+        <div class="recorder">
+            <p>Recorder:</p>
+            <button class="btn" id="start">Start</button>
+            <button class="btn" id="stop">Stop</button>
+        </div>
+        <div class="clip">
+            <p>Audio:</p>
+            <audio id="player"><source src=""></audio>
+            <div class="audio-player disabled">
+                <div class="controls"> 
+                    <div class="play-container"><div class="toggle-play play"></div></div>
+                    <div class="timeline"><div class="progress"></div></div> 
                     <div class="volume-container">
                         <div class="volume-button">
                             <div class="volume fa fa-volume-up"></div>
                         </div> 
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-                <p>Transcript:</p>
-                <div class="transcript" id="transcript">
-                    <span>This is where your annotations are..</span>
-                </div>
+                    </div> 
+                </div> 
             </div>
         </div>
+        <div>
+            <p>Transcript:</p>
+            <div class="transcript" id="transcript">
+                <span>This is where your annotations are..</span>
+            </div>
+        </div> 
     </div>
     <script type="text/javascript" src="{{ url_for('static', filename='audio.js') }}">
     </script>

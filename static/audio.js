@@ -1,53 +1,32 @@
-const uploadBtn = document.getElementById("upload");
 const checkpointSelect = document.getElementById("checkpoint");
 const taskSelect = document.getElementById("task");
-const audioInp = document.getElementById("audio");
 const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
 
-const playCtx = customAudioPlayer(audioTag);
+const audioPlayer = document.querySelector(".audio-player");
+
+let allChunks = [];
+let allTexts = [];
+let stopped = 0;
 
 console.log('welcome to talk!')
 
 async function sendPOST(url, formData) {
-	uploadBtn.disabled = true;
 	checkpointSelect.classList.add("disabled");
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
 	checkpointSelect.classList.remove("disabled");
-	uploadBtn.removeAttribute('disabled');
 	console.log(result)
 	return result
 }
 
 async function selectCkpt(e) {
 	statusDiv.innerHTML = `loading checkpoint..`
-	let formData = new FormData();
+	let fd = new FormData();
 	formData.append("checkpoint", e.currentTarget.value);
-	let result = await sendPOST('/checkpoint/', formData);	
+	let result = await sendPOST('/checkpoint/', fd);	
 	statusDiv.innerHTML = result.status	
-}
-
-async function transcribeAudio(task) {	
-	let inpAudio = audioInp.files[0]
-
-	if (inpAudio != null) {
-		if(inpAudio.type.startsWith('audio')) {
-			transcriptDiv.innerHTML = `transcribing...`
-			let formData = new FormData();
-			formData.append("task", task);
-			formData.append("audio", inpAudio);	
-			let result = await sendPOST('/', formData);
-			audioTag.src = URL.createObjectURL(inpAudio);	
-			pauseAudio(audioTag, playCtx);
-			transcriptDiv.innerHTML = result.text	
-		} else {
-			transcriptDiv.innerHTML = `incorrect file type: ${inpAudio.type}! expected audio file.`
-		}
-	} else {
-		transcriptDiv.innerHTML = `no files are chosen, please upload a file from your device..`
-	}
 }
 
 function customSelect(className) {
@@ -127,39 +106,27 @@ function pauseAudio(audio, btn) {
 	audio.pause();
 }
 
+function pauseAudio(audio, btn) {	
+	btn.classList.remove("pause");
+	btn.classList.add("play");
+	audio.pause();
+}
+
 function customAudioPlayer(audio) {
-	const audioPlayer = document.querySelector(".audio-player");
 	const playBtn = audioPlayer.querySelector(".controls .toggle-play");
-	const timeline = audioPlayer.querySelector(".timeline");
 	const progressBar = audioPlayer.querySelector(".progress");
 	const volumeBtn = audioPlayer.querySelector(".volume-button");
 	const volumeEl = audioPlayer.querySelector(".volume-container .volume"); 
 
-	audio.addEventListener(
-		"loadeddata",
-		() => {
-			audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(audio.duration);
-			audio.volume = .75;
-		},
-		false
-	);
-
-	timeline.addEventListener("click", e => {
-		const timelineWidth = window.getComputedStyle(timeline).width;
-		const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
-		audio.currentTime = timeToSeek;
-	}, false);
-
 	playBtn.addEventListener(
-		"click",
-		() => {
+		"click", () => {
 			if (audio.paused) {
 				playBtn.classList.remove("play");
 				playBtn.classList.add("pause");
 				audio.play();
 			} else {
 				pauseAudio(audio, playBtn);
-			}
+			}	
 		},
 		false
 	);
@@ -176,41 +143,89 @@ function customAudioPlayer(audio) {
 	});
 
 	setInterval(() => {
-		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-		audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(
-			audio.currentTime
-		);
-		if (audio.currentTime >= audio.duration) {
-			pauseAudio(audio, playBtn);
-		}
+		progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";		
 	}, 500);
 
-	function getTimeCodeFromNum(num) {
-		let seconds = parseInt(num);
-		let minutes = parseInt(seconds / 60);
-		seconds -= minutes * 60;
-		const hours = parseInt(minutes / 60);
-		minutes -= hours * 60;
-
-		if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
-		return `${String(hours).padStart(2, 0)}:${minutes}:${String(
-			seconds % 60
-		).padStart(2, 0)}`;
+	audio.onended = (e) => {
+		audio.src = URL.createObjectURL(new Blob(allChunks));
+		pauseAudio(audio, playBtn);
 	}
+}
 
-	return playBtn;
+function liveAudioSpeechRecognition(audio) {	
+	let recordBtn = document.getElementById("record");
+	let stopBtn = document.getElementById("stop");
+
+	if (navigator.mediaDevices) {
+		navigator.mediaDevices.getUserMedia({audio: true})
+		.then((stream) => {
+			const mediaRecorder = new MediaRecorder(stream, {
+				mimeType: 'audio/webm; codecs=opus'
+			})
+
+			recordBtn.onclick = () => {
+				allChunks = [];
+				allTexts = [];
+				audio.src = "";
+				transcriptDiv.innerHTML = `<span>Re-annotating..</span>`;
+				console.log('start recording');
+				stopped = 0;
+				mediaRecorder.start();
+				recordBtn.style.background = "red";
+				record.style.color = "white";
+			}
+
+			stopBtn.onclick = (e) => {
+				console.log('stop recording');
+				stopped = 1;
+				mediaRecorder.stop();
+				record.style.background = "";
+				record.style.color = "black";	
+				audio.src = URL.createObjectURL(new Blob(allChunks))
+			}
+
+			setInterval(function() { 
+				if(mediaRecorder.state == "recording") {
+					mediaRecorder.stop();	
+				}	
+			}, 2000);
+
+			mediaRecorder.ondataavailable = async (e) => {
+				allChunks.push(e.data);
+				if (!stopped) {
+					let fd = new FormData();
+					fd.append("audio", new Blob([e.data]), `${guid}.webm`);
+					fd.append("task", taskSelect.value);
+
+					console.log('resuming media and sending audio request..');
+
+					mediaRecorder.start();
+
+					let result = await sendPOST("/", fd);
+					let text = result.text;
+					if(!text.includes('err_msg')) {
+						allTexts.push(text);
+						transcriptDiv.innerHTML = `${allTexts.join(' ')}` 
+					}
+				} 	
+			}
+		})
+		.catch((err) => {
+			console.error(`The following error occurred: ${err}`);
+		})
+	}
 }
 
 customSelect("selectopts");
+customAudioPlayer(audioTag);
+liveAudioSpeechRecognition(audioTag);
+
 document.addEventListener("click", closeAllSelect);
+
 checkpointSelect.addEventListener("change", (e) => { 
 	if(!e.currentTarget.classList.contains('disabled')) {
 		selectCkpt(e); 
 	}
-});
-uploadBtn.addEventListener("click", () => {
-	pauseAudio(audioTag, playCtx);
-	transcribeAudio(taskSelect.value)
 });
 
 
