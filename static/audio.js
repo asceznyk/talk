@@ -24,7 +24,7 @@ async function sendPOST(url, formData) {
 async function selectCkpt(e) {
 	statusDiv.innerHTML = `loading checkpoint..`
 	let fd = new FormData();
-	formData.append("checkpoint", e.currentTarget.value);
+	fd.append("checkpoint", e.currentTarget.value);
 	let result = await sendPOST('/checkpoint/', fd);	
 	statusDiv.innerHTML = result.status	
 }
