@@ -1,5 +1,6 @@
 const checkpointSelect = document.getElementById("checkpoint");
 const taskSelect = document.getElementById("task");
+const langSelect = document.getElementById("language");
 const audioTag = document.getElementById("player");
 const statusDiv = document.getElementById("status");
 const transcriptDiv = document.getElementById("transcript");
@@ -32,6 +33,19 @@ async function selectCkpt(e) {
 	fd.append("checkpoint", e.currentTarget.value);
 	let result = await sendPOST('/checkpoint/', fd);	
 	statusDiv.innerHTML = result.status	
+}
+
+function addLanguages() {
+	fetch("languages.json")
+		.then(response => response.json())
+		.then(data => {
+			Object.keys(data).forEach(function(key) {
+				let op = document.createElement("option");
+				op.innerHTML = data[key];
+				op.value = key;
+				langSelect.appendChild(op);
+			});
+		})
 }
 
 function customSelect(className) {
@@ -225,6 +239,7 @@ function liveAudioSpeechRecognition(audio) {
 	}
 }
 
+addLanguages();
 customSelect("selectopts");
 customAudioPlayer(audioTag);
 liveAudioSpeechRecognition(audioTag);
