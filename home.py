@@ -53,9 +53,8 @@ def main_page():
             webm = AudioSegment.from_file(to_annotate, 'webm')
             to_annotate_wav = to_annotate.replace('webm', 'wav')
             webm.export(to_annotate_wav, format='wav')
-            _, source = wavfile.read(to_annotate_wav)
             options = DecodingOptions(task=request.form.get('task'))
-            mel = pad_or_trim(log_mel_spec(source), length=2*model.dims.n_audio_ctx) 
+            mel = pad_or_trim(log_mel_spec(to_annotate_wav), length=2*model.dims.n_audio_ctx) 
             result = model.decode(mel, options)
             text, language = result.text, result.language
             print(text, language)
