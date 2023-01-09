@@ -20,7 +20,7 @@ console.log('welcome to talk!')
 
 function toggleButtons(disabled) {
 	let buttons = document.getElementsByTagName("button");
-	for(let i = 0; let i < buttons.length; i++) {
+	for(let i = 0; i < buttons.length; i++) {
 		if(disabled) {
 			buttons[i].removeAttribute("disabled");
 		} else {
