@@ -1,4 +1,4 @@
-{
+const allLanguages = {
 	"en": "english",
 	"zh": "chinese",
 	"de": "german",

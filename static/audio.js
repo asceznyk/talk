@@ -36,16 +36,12 @@ async function selectCkpt(e) {
 }
 
 function addLanguages() {
-	fetch("talk/languages.json")
-		.then(response => response.json())
-		.then(data => {
-			Object.keys(data).forEach(function(key) {
-				let op = document.createElement("option");
-				op.innerHTML = data[key];
-				op.value = key;
-				langSelect.appendChild(op);
-			});
-		})
+	Object.keys(allLanguages).forEach(function(key) {
+		let op = document.createElement("option");
+		op.innerHTML = data[key];
+		op.value = key;
+		langSelect.appendChild(op);
+	});	
 }
 
 function customSelect(className) {
