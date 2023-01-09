@@ -10,7 +10,7 @@ import torch
 
 from transformers import GPT2TokenizerFast
     
-with open('languages.json') as f:
+with open('./languages.json') as f:
     LANGUAGES = json.load(f)
 
 TO_LANGUAGE_CODE = {
