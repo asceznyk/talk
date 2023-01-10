@@ -47,8 +47,6 @@ class MultiHeadAttention(nn.Module):
         k = k.view(*k.shape[:2], self.n_head, -1).permute(0, 2, 3, 1) * scale
         v = v.view(*v.shape[:2], self.n_head, -1).permute(0, 2, 1, 3)
 
-        print(f"log_tensors on qkv_attention is {log_tensors}")
-
         if log_tensors:
             print(f"q.shape = {q.shape}")
             print(f"k.shape = {k.shape}")

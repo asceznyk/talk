@@ -22,12 +22,12 @@ class Inference:
         self.kv_cache = {}
         self.hooks = []
 
-    def logits(self, tokens:Tensor, audio_features:Tensor) -> Tensor:
+    def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
         if not self.kv_cache:
             self.kv_cache, self.hooks = self.model.install_cache()
 
         if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
-        return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache)
+        return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache, log_tensors=log_tensors)
 
     def cleanup_caching(self):
         for hook in self.hooks:
@@ -299,7 +299,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         try:
             for i in range(sample_len):
-                logits = inference.logits(tokens, audio_features)
+                logits = inference.logits(tokens, audio_features, options.log_tensors)
 
                 if i == 0 and tokenizer.no_speech is not None:
                     probs_at_sot = logits[:, sot_index].float().softmax(dim=-1)
