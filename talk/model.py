@@ -70,6 +70,7 @@ class MultiHeadAttention(nn.Module):
             return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
         except:
             print(f"inp.shape = {inp.shape}")
+            print(f"out.shape = {self.key(inp).shape}")
             print(f"q.shape = {q.shape}")
             print(f"k.shape = {k.shape}")
             print(f"v.shape = {v.shape}")
