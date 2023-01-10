@@ -188,6 +188,7 @@ function customAudioPlayer(audio) {
 
 function liveAudioSpeechRecognition(audio) {
 	let sidx = 0;
+	let fullStr = ``;
 
 	if (navigator.mediaDevices) {
 		navigator.mediaDevices.getUserMedia({audio: true})
@@ -239,6 +240,7 @@ function liveAudioSpeechRecognition(audio) {
 					fd.append("audio", new Blob([e.data]), `${guid}_${sidx}.webm`);
 					fd.append("task", taskSelect.value);
 					fd.append("language", langSelect.value);
+					fd.append("prompt", fullStr);
 
 					console.log('resuming media and sending audio request..');
 
@@ -258,7 +260,7 @@ function liveAudioSpeechRecognition(audio) {
 							return 0;
 						})
 						console.log(allTexts);
-						let fullStr = ``;
+						fullStr = ``;
 						allTexts.forEach((k) => {
 							fullStr += `${k['text']} `;
 						})

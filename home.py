@@ -27,15 +27,6 @@ allowed_exts = {'wav', 'mp3', 'ogg', 'webm'}
 base_path = "assets/tiny.pt"
 model, _ = load_model(base_path)
 
-options = DecodingOptions(
-    task = request.form['task'], 
-    language = request.form['language'],
-    log_tensors=True
-)
-print(f"input options task={options.task}, language={options.language}")
-print(f"log_tensors={options.log_tensors}")
-
-
 @app.route("/checkpoint/", methods=['POST'])
 def get_model():
     global model
@@ -60,6 +51,16 @@ def main_page():
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
 
+            inp = request.form['prompt']
+            options = DecodingOptions(
+                task = request.form['task'], 
+                language = request.form['language'],
+                log_tensors = True
+                prompt = None if inp == '' else inp 
+            )
+            print(f"input options task={options.task}, language={options.language}")
+            print(f"log_tensors={options.log_tensors}")
+
             webm = AudioSegment.from_file(to_annotate, 'webm')
             to_annotate_wav = to_annotate.replace('webm', 'wav')
             webm.export(to_annotate_wav, format='wav') 
@@ -70,8 +71,6 @@ def main_page():
             print(f"input audio shape: {mel.shape}")
             result = model.decode(mel, options)
             text, language = result.text, result.language
-            if options.prompt is not None: options.prompt += text
-            else: options.prompt = text
             print(options.prompt)
             print(text, language)
         else:
