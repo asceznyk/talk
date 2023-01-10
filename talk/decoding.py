@@ -30,7 +30,10 @@ class Inference:
             print(self.kv_cache)
 
         if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
-        return self.model.decoder(tokens, audio_features, kv_cache=None, log_tensors=log_tensors)
+        try:
+            return self.model.decoder(tokens, audio_features, kv_cache=None, log_tensors=log_tensors)
+        except:
+            print(f"input tokens: {tokens}") 
 
     def cleanup_caching(self):
         for hook in self.hooks:
