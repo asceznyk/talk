@@ -79,7 +79,6 @@ def main_page():
         else:
             return render_template('main.html')
     except Exception as e:
-        ipdb.pm()
         ipdb.set_trace()
 
 if __name__ == '__main__':
