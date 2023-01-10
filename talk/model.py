@@ -73,6 +73,7 @@ class MultiHeadAttention(nn.Module):
             print(f"k.shape = {k.shape}")
             print(f"v.shape = {v.shape}")
             print(f"x.shape = {x.shape}")
+            print(f"xa.shape = {xa.shape}")
             print(f"kv_cache = {kv_cache}")
             if mask is not None: print(f"mask.shape = {mask.shape}")
 
