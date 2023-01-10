@@ -27,6 +27,15 @@ allowed_exts = {'wav', 'mp3', 'ogg', 'webm'}
 base_path = "assets/tiny.pt"
 model, _ = load_model(base_path)
 
+options = DecodingOptions(
+    task = request.form['task'], 
+    language = request.form['language'],
+    log_tensors=True
+)
+print(f"input options task={options.task}, language={options.language}")
+print(f"log_tensors={options.log_tensors}")
+
+
 @app.route("/checkpoint/", methods=['POST'])
 def get_model():
     global model
@@ -53,15 +62,7 @@ def main_page():
 
             webm = AudioSegment.from_file(to_annotate, 'webm')
             to_annotate_wav = to_annotate.replace('webm', 'wav')
-            webm.export(to_annotate_wav, format='wav')
-            
-            options = DecodingOptions(
-                task = request.form['task'], 
-                language = request.form['language'],
-                log_tensors=True
-            )
-            print(f"input options task={options.task}, language={options.language}")
-            print(f"log_tensors={options.log_tensors}")
+            webm.export(to_annotate_wav, format='wav') 
             
             mel = log_mel_spec(to_annotate_wav) 
             mel = pad_or_trim(mel, length=2*model.dims.n_audio_ctx) 
