@@ -240,7 +240,6 @@ function liveAudioSpeechRecognition(audio) {
 					fd.append("audio", new Blob([e.data]), `${guid}_${sidx}.webm`);
 					fd.append("task", taskSelect.value);
 					fd.append("language", langSelect.value);
-					fd.append("prompt", fullStr);
 
 					console.log('resuming media and sending audio request..');
 

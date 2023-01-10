@@ -18,14 +18,14 @@ from .utils import compression_ratio
 if TYPE_CHECKING: from .model import Whisper
 
 class Inference:
-    def __init__(self, model:"Whisper", initial_token_length:int):
+    def __init__(self, model:"Whisper", initial_token_length:int, enable_cache:bool):
         self.model: "Whisper" = model
         self.initial_token_length = initial_token_length
-        self.kv_cache = {}
+        self.kv_cache = {} if enable_cache else None
         self.hooks = []
 
     def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
-        if not self.kv_cache:
+        if enable_cache:
             self.kv_cache, self.hooks = self.model.install_cache()
 
         if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
@@ -393,7 +393,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     sample_begin:int = len(initial_tokens)
     sot_index:int = initial_tokens.index(tokenizer.sot)
 
-    inference = Inference(model, len(initial_tokens))
+    inference = Inference(model, len(initial_tokens), )
 
     sequence_ranker = options.sequence_ranker
 

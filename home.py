@@ -51,12 +51,10 @@ def main_page():
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
 
-            inp = request.form['prompt']
             options = DecodingOptions(
                 task = request.form['task'], 
                 language = request.form['language'],
-                log_tensors = True,
-                prompt = None if inp == '' else inp 
+                log_tensors = True
             )
             print(f"input options task={options.task}, language={options.language}")
             print(f"log_tensors={options.log_tensors}")
@@ -71,7 +69,6 @@ def main_page():
             print(f"input audio shape: {mel.shape}")
             result = model.decode(mel, options)
             text, language = result.text, result.language
-            print(options.prompt)
             print(text, language)
         else:
             text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
