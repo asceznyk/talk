@@ -1,6 +1,5 @@
 import os
 import io
-import pdb
 import wave
 import json
 
@@ -67,13 +66,10 @@ def main_page():
             mel = log_mel_spec(to_annotate_wav) 
             mel = pad_or_trim(mel, length=2*model.dims.n_audio_ctx) 
 
-            try:
-                print(f"input audio shape: {mel.shape}")
-                result = model.decode(mel, options)
-                text, language = result.text, result.language
-                print(text, language)
-            except:
-                pdb.set_trace()
+            print(f"input audio shape: {mel.shape}")
+            result = model.decode(mel, options)
+            text, language = result.text, result.language
+            print(text, language)
         else:
             text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
 

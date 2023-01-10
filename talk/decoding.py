@@ -1,7 +1,9 @@
-from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Iterable, Optional, Sequence, Union, Callable, TYPE_CHECKING
+import pdb
 
 import numpy as np
+
+from dataclasses import dataclass, field
+from typing import Dict, List, Tuple, Iterable, Optional, Sequence, Union, Callable, TYPE_CHECKING
 
 import torch
 import torch.nn.functional as F
@@ -415,8 +417,12 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
             ApplyTimestampRules(tokenizer, sample_begin, max_initial_timestamp_index)
         )
 
-    result = run(mel)
-    if single: result = result[0] 
+    try:
+        result = run(mel)
+        if single: result = result[0]
+    except:
+        pdb.set_trace()
+
     return result 
 
 
