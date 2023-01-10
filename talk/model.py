@@ -40,18 +40,23 @@ class MultiHeadAttention(nn.Module):
         self.value = Linear(n_state, n_state)
         self.out = Linear(n_state, n_state)
 
-    def qkv_attention(self, q:Tensor, k:Tensor, v:Tensor, mask:Optional[Tensor] = None):
+    def qkv_attention(self, q:Tensor, k:Tensor, v:Tensor, mask:Optional[Tensor]=None, log_tensors:bool=False):
         _, n_ctx, n_state = q.shape
         scale = (n_state // self.n_head) ** -0.25
         q = q.view(*q.shape[:2], self.n_head, -1).permute(0, 2, 1, 3) * scale
         k = k.view(*k.shape[:2], self.n_head, -1).permute(0, 2, 3, 1) * scale
         v = v.view(*v.shape[:2], self.n_head, -1).permute(0, 2, 1, 3)
 
+        if log_tensors:
+            print(f"q.shape = {q.shape}")
+            print(f"k.shape = {k.shape}")
+            print(f"mask.shape = {mask.shape}")
+
         qk = q @ k
         if mask is not None: qk += mask[:n_ctx, :n_ctx]
         return (F.softmax(qk.float(), dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2)
 
-    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None):
+    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
         q = self.query(x)
 
         if kv_cache is None or xa is None or self.key not in kv_cache:
@@ -62,7 +67,7 @@ class MultiHeadAttention(nn.Module):
             k = kv_cache[self.key]
             v = kv_cache[self.value]
 
-        return self.out(self.qkv_attention(q, k, v, mask))
+        return self.out(self.qkv_attention(q, k, v, mask, log_tensors))
 
 class ResidualAttentionBlock(nn.Module):
     def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):
@@ -80,10 +85,10 @@ class ResidualAttentionBlock(nn.Module):
         )
         self.mlp_ln = LayerNorm(n_state)
 
-    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None):
-        x = x + self.attn(self.attn_ln(x), mask=mask, kv_cache=kv_cache)
+    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
+        x = x + self.attn(self.attn_ln(x), mask=mask, kv_cache=kv_cache, log_tensors=log_tensors)
         if self.cross_attn:
-            x = x + self.cross_attn(self.cross_attn_ln(x), xa, kv_cache=kv_cache)
+            x = x + self.cross_attn(self.cross_attn_ln(x), xa, kv_cache=kv_cache, log_tensors=log_tensors)
         return x + self.mlp(self.mlp_ln(x))
 
 class AudioEncoder(nn.Module):
@@ -126,12 +131,12 @@ class TextDecoder(nn.Module):
 
         self.ln = LayerNorm(n_state)
 
-    def forward(self, x:Tensor, xa:Tensor, kv_cache:Optional[dict]=None):
+    def forward(self, x:Tensor, xa:Tensor, kv_cache:Optional[dict]=None, log_tensors:bool=False):
         offset = next(iter(kv_cache.values())).shape[1] if kv_cache else 0
         x = self.token_embedding(x) + self.positional_embedding[offset:offset+x.shape[-1]]
 
         for block in self.blocks:
-            x = block(x, xa, mask=self.mask, kv_cache=kv_cache)
+            x = block(x, xa, mask=self.mask, kv_cache=kv_cache, log_tensors=log_tensors)
 
         return (self.ln(x) @ torch.transpose(self.token_embedding.weight, 0, 1))
 

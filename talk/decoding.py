@@ -194,7 +194,8 @@ class DecodingOptions:
     suppress_tokens:Optional[Union[str, Iterable[int]]] = "-1"
     without_timestamps:bool = False
     max_initial_timestamp:Optional[float] = 1.0 
-    fp16:bool = False 
+    fp16:bool = False
+    log_tensors:bool = False
 
 @dataclass(frozen=True)
 class DecodingResult:
@@ -395,14 +396,12 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     sequence_ranker = options.sequence_ranker
 
     '''if options.beam_size is not None:
-        decoder = BeamSearchDecoder(
-            options.beam_size, tokenizer.eot, inference, options.patience
-        )
-    else:'''
-    
+        decoder = BeamSearchDecoder(options.beam_size, tokenizer.eot, inference, options.patience)
+    else:''' 
+        
     decoder = GreedyDecoder(options.temperature, tokenizer.eot)
-    logit_filters = []
 
+    logit_filters = []
     if options.suppress_blank:
         logit_filters.append(SuppressBlank(tokenizer, sample_begin))
     if options.suppress_tokens:
