@@ -245,10 +245,24 @@ function liveAudioSpeechRecognition(audio) {
 					mediaRecorder.start();
 
 					let result = await sendPOST("/", fd);
+
+					let timestamp = Date.now(); 
 					let text = result.text;
 					if(!text.includes('err_msg')) {
-						allTexts.push(text);
-						transcriptDiv.innerHTML = `${allTexts.join(' ')}` 
+						allTexts.push({"timestamp":timestamp, "text":text});
+						allTexts.sort(function(a, b) {
+							at = a["timestamp"];
+							bt = b["timestamp"];
+							if(at < bt) return -1;
+							if(at > bt) return 1;
+							return 0;
+						})
+						console.log(allTexts);
+						let fullStr = ``;
+						for (let obj in allTexts) {
+							fullStr += `${obj["text"]} `; 
+						}
+						transcriptDiv.innerHTML = fullStr.replaceAll('.', '');
 					}
 				} 	
 			}
