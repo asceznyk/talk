@@ -26,6 +26,22 @@ class ModelDimensions:
     n_text_head: int
     n_text_layer: int
 
+class LayerNorm(nn.LayerNorm):
+    def forward(self, x: Tensor) -> Tensor:
+        return super().forward(x.float()).type(x.dtype)
+
+class Linear(nn.Linear):
+    def forward(self, x: Tensor) -> Tensor:
+        return F.linear(
+            x, self.weight.to(x.dtype), None if self.bias is None else self.bias.to(x.dtype)
+        )
+
+class Conv1d(nn.Conv1d):
+    def _conv_forward(self, x: Tensor, weight: Tensor, bias: Optional[Tensor]) -> Tensor:
+        return super()._conv_forward(
+            x, weight.to(x.dtype), None if bias is None else bias.to(x.dtype)
+        )
+
 def embed_position(length, dims, max_scale=10000):
     assert dims % 2 == 0 
     scaled_time = torch.arange(length)[:, np.newaxis] * torch.exp(-np.log(max_scale) / (dims // 2 - 1) * torch.arange(dims // 2))[np.newaxis, :]
