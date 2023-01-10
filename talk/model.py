@@ -43,22 +43,20 @@ class MultiHeadAttention(nn.Module):
     def qkv_attention(self, q:Tensor, k:Tensor, v:Tensor, mask:Optional[Tensor]=None, log_tensors:bool=False):
         _, n_ctx, n_state = q.shape
         scale = (n_state // self.n_head) ** -0.25
-        q = q.view(*q.shape[:2], self.n_head, -1).permute(0, 2, 1, 3) * scale
-        k = k.view(*k.shape[:2], self.n_head, -1).permute(0, 2, 3, 1) * scale
-        v = v.view(*v.shape[:2], self.n_head, -1).permute(0, 2, 1, 3)
+        try:
+            q = q.view(*q.shape[:2], self.n_head, -1).permute(0, 2, 1, 3) * scale
+            k = k.view(*k.shape[:2], self.n_head, -1).permute(0, 2, 3, 1) * scale
+            v = v.view(*v.shape[:2], self.n_head, -1).permute(0, 2, 1, 3)
 
-        if log_tensors:
-            print(f"q.shape = {q.shape}")
-            print(f"k.shape = {k.shape}")
-            if mask is not None: print(f"mask.shape = {mask.shape}")
-
-        qk = q @ k
-
-        if log_tensors:
-            print(f"qk.shape = {qk.shape}")
-
-        if mask is not None: qk += mask[:n_ctx, :n_ctx]
-        return (F.softmax(qk.float(), dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2)
+            qk = q @ k
+            if mask is not None: qk += mask[:n_ctx, :n_ctx]
+            return (F.softmax(qk.float(), dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2)
+        except:
+            if log_tensors:
+                print(f"q.shape = {q.shape}")
+                print(f"k.shape = {k.shape}")
+                if mask is not None: 
+                    print(f"mask.shape = {mask[:n_ctx, :n_ctx].shape}")
 
     def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
         q = self.query(x)

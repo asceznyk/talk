@@ -417,11 +417,8 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
             ApplyTimestampRules(tokenizer, sample_begin, max_initial_timestamp_index)
         )
 
-    try:
-        result = run(mel)
-        if single: result = result[0]
-    except:
-        pdb.set_trace()
+    result = run(mel)
+    if single: result = result[0]
 
     return result 
 
