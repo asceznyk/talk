@@ -79,7 +79,8 @@ def main_page():
         else:
             return render_template('main.html')
     except Exception as e:
-        ipdb.set_trace(e)
+        ipdb.pm()
+        ipdb.set_trace()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
