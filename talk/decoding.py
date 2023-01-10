@@ -173,7 +173,7 @@ def maximum_likelyhood_ranker(tokens:List[List[Tensor]], sum_logprobs:List[List[
     lengths = [[len(t) for t in s] for s in tokens]
     return [np.argmax(scores(p,l)) for p, l in zip(sum_logprobs, lengths)]
 
-@dataclass(frozen=True)
+@dataclass
 class DecodingOptions:
     task:str = "transcribe" # whether to perform X->X "transcribe" or X->English "translate"
     language:Optional[str] = None # language that the audio is in; uses detected language if None
