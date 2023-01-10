@@ -2,6 +2,7 @@ import os
 import io
 import wave
 import json
+import ipdb
 
 import tempfile
 import traceback
@@ -44,38 +45,41 @@ def main_page():
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_exts
 
-    if request.method == 'POST':
-        language = "en"
-        file = request.files['audio']
-        if file and allowed_file(file.filename): 
-            to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
-            file.save(to_annotate)
+    try:
+        if request.method == 'POST':
+            language = "en"
+            file = request.files['audio']
+            if file and allowed_file(file.filename): 
+                to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
+                file.save(to_annotate)
 
-            webm = AudioSegment.from_file(to_annotate, 'webm')
-            to_annotate_wav = to_annotate.replace('webm', 'wav')
-            webm.export(to_annotate_wav, format='wav')
-            
-            options = DecodingOptions(
-                task = request.form['task'], 
-                language = request.form['language'],
-                log_tensors=True
-            )
-            print(f"input options task={options.task}, language={options.language}")
-            print(f"log_tensors={options.log_tensors}")
-            
-            mel = log_mel_spec(to_annotate_wav) 
-            mel = pad_or_trim(mel, length=2*model.dims.n_audio_ctx) 
-            
-            print(f"input audio shape: {mel.shape}")
-            result = model.decode(mel, options)
-            text, language = result.text, result.language
-            print(text, language)
+                webm = AudioSegment.from_file(to_annotate, 'webm')
+                to_annotate_wav = to_annotate.replace('webm', 'wav')
+                webm.export(to_annotate_wav, format='wav')
+                
+                options = DecodingOptions(
+                    task = request.form['task'], 
+                    language = request.form['language'],
+                    log_tensors=True
+                )
+                print(f"input options task={options.task}, language={options.language}")
+                print(f"log_tensors={options.log_tensors}")
+                
+                mel = log_mel_spec(to_annotate_wav) 
+                mel = pad_or_trim(mel, length=2*model.dims.n_audio_ctx) 
+                
+                print(f"input audio shape: {mel.shape}")
+                result = model.decode(mel, options)
+                text, language = result.text, result.language
+                print(text, language)
+            else:
+                text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
+
+            return json.dumps({"text":text, "language":language})
         else:
-            text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
-
-        return json.dumps({"text":text, "language":language})
-    else:
-        return render_template('main.html')
+            return render_template('main.html')
+    except:
+        ipdb.set_trace()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
