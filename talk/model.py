@@ -90,7 +90,7 @@ class ResidualAttentionBlock(nn.Module):
         self.mlp_ln = LayerNorm(n_state)
 
     def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
-        x = x + self.attn(self.attn_ln(x), mask=mask, kv_cache=kv_cache, log_tensors=log_tensors)
+        x = x + self.attn(self.attn_ln(x), mask=mask, kv_cache=kv_cache, log_tensors=False)
         if self.cross_attn:
             x = x + self.cross_attn(self.cross_attn_ln(x), xa, kv_cache=kv_cache, log_tensors=log_tensors)
         return x + self.mlp(self.mlp_ln(x))
