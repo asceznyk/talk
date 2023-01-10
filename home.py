@@ -71,6 +71,7 @@ def main_page():
             text, language = result.text, result.language
             if options.prompt is not None: options.prompt += text
             else: options.prompt = text
+            print(options.prompt)
             print(text, language)
         else:
             text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
