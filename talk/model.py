@@ -53,8 +53,6 @@ class MultiHeadAttention(nn.Module):
             return (F.softmax(qk.float(), dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2)
         except:
             if log_tensors:
-                print(f"q.shape = {q.shape}")
-                print(f"k.shape = {k.shape}")
                 if mask is not None: 
                     print(f"mask.shape = {mask[:n_ctx, :n_ctx].shape}")
 
@@ -71,6 +69,9 @@ class MultiHeadAttention(nn.Module):
 
             return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
         except:
+            print(f"q.shape = {q.shape}")
+            print(f"k.shape = {k.shape}")
+            print(f"v.shape = {v.shape}")
             print(f"x.shape = {x.shape}")
             if mask is not None: print(f"mask.shape = {mask.shape}")
 
