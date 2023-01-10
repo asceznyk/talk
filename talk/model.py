@@ -47,6 +47,8 @@ class MultiHeadAttention(nn.Module):
         k = k.view(*k.shape[:2], self.n_head, -1).permute(0, 2, 3, 1) * scale
         v = v.view(*v.shape[:2], self.n_head, -1).permute(0, 2, 1, 3)
 
+        print(f"log_tensors on qkv_attention is {log_tensors}")
+
         if log_tensors:
             print(f"q.shape = {q.shape}")
             print(f"k.shape = {k.shape}")
@@ -67,7 +69,7 @@ class MultiHeadAttention(nn.Module):
             k = kv_cache[self.key]
             v = kv_cache[self.value]
 
-        return self.out(self.qkv_attention(q, k, v, mask, log_tensors))
+        return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
 
 class ResidualAttentionBlock(nn.Module):
     def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):
