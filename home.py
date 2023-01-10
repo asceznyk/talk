@@ -69,7 +69,8 @@ def main_page():
             print(f"input audio shape: {mel.shape}")
             result = model.decode(mel, options)
             text, language = result.text, result.language
-            options.prompt += text
+            if options.prompt is not None: options.prompt += text
+            else: options.prompt = text
             print(text, language)
         else:
             text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
