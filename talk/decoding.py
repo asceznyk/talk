@@ -315,7 +315,6 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
                     logit_filter.apply(logits, tokens)
 
                 tokens, completed = decoder.update(tokens, logits, sum_logprobs)
-                print(tokens)
                 if tokens.shape[-1] > n_ctx or completed:
                     break
         finally: 
@@ -339,6 +338,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         audio_features = audio_features.repeat_interleave(n_group, dim=0)
         tokens = tokens.repeat_interleave(n_group, dim=0)
+        print(tokenizer.decode(tokens))
         tokens, sum_logprobs, no_speech_probs = main_loop(audio_features, tokens)
 
         audio_features = audio_features[::n_group]
