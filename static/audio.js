@@ -259,9 +259,9 @@ function liveAudioSpeechRecognition(audio) {
 						})
 						console.log(allTexts);
 						let fullStr = ``;
-						for (let obj in allTexts) {
-							fullStr += `${obj["text"]} `; 
-						}
+						allTexts.forEach((k) => {
+							fullStr += `${k['text']} `;
+						})
 						transcriptDiv.innerHTML = fullStr.replaceAll('.', '');
 					}
 				} 	
