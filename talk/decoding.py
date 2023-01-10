@@ -338,7 +338,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         audio_features = audio_features.repeat_interleave(n_group, dim=0)
         tokens = tokens.repeat_interleave(n_group, dim=0)
-        print(tokenizer.decode(tokens))
+        print([tokenizer.decode(t) in tokens])
         tokens, sum_logprobs, no_speech_probs = main_loop(audio_features, tokens)
 
         audio_features = audio_features[::n_group]
