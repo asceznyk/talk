@@ -21,8 +21,9 @@ class Inference:
     def __init__(self, model:"Whisper", initial_token_length:int, enable_cache:bool):
         self.model: "Whisper" = model
         self.initial_token_length = initial_token_length
-        self.kv_cache = {} if enable_cache else None
+        self.kv_cache = {} 
         self.hooks = []
+        self.enable_cache = enable_cache
 
     def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
         if self.kv_cache is not None:
@@ -314,6 +315,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
                     logit_filter.apply(logits, tokens)
 
                 tokens, completed = decoder.update(tokens, logits, sum_logprobs)
+                print(tokens)
                 if tokens.shape[-1] > n_ctx or completed:
                     break
         finally: 
