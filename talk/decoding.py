@@ -29,7 +29,9 @@ class Inference:
             self.kv_cache, self.hooks = self.model.install_cache()
             print(self.kv_cache)
 
-        if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
+        if tokens.shape[-1] > self.initial_token_length: 
+            tokens = tokens[:, -1:]
+
         try:
             return self.model.decoder(tokens, audio_features, kv_cache=None, log_tensors=log_tensors)
         except:

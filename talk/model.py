@@ -137,8 +137,12 @@ class TextDecoder(nn.Module):
         offset = next(iter(kv_cache.values())).shape[1] if kv_cache else 0
         x = self.token_embedding(x) + self.positional_embedding[offset:offset+x.shape[-1]]
 
-        for block in self.blocks:
-            x = block(x, xa, mask=self.mask, kv_cache=kv_cache, log_tensors=log_tensors)
+        try:
+            for block in self.blocks:
+                x = block(x, xa, mask=self.mask, kv_cache=kv_cache, log_tensors=log_tensors)
+        except:
+            print(f"block x input.shape={x.shape}")
+            print(f"kv_cache={kv_cache}")
 
         return (self.ln(x) @ torch.transpose(self.token_embedding.weight, 0, 1))
 
