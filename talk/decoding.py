@@ -198,6 +198,7 @@ class DecodingOptions:
     max_initial_timestamp:Optional[float] = 1.0 
     fp16:bool = False
     log_tensors:bool = False
+    enable_cache:bool = False
 
 @dataclass(frozen=True)
 class DecodingResult:
@@ -393,7 +394,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     sample_begin:int = len(initial_tokens)
     sot_index:int = initial_tokens.index(tokenizer.sot)
 
-    inference = Inference(model, len(initial_tokens), )
+    inference = Inference(model, len(initial_tokens), options.enable_cache)
 
     sequence_ranker = options.sequence_ranker
 
