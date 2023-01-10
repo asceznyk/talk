@@ -78,8 +78,8 @@ def main_page():
             return json.dumps({"text":text, "language":language})
         else:
             return render_template('main.html')
-    except:
-        ipdb.set_trace()
+    except Exception as e:
+        ipdb.set_trace(e)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
