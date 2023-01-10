@@ -199,7 +199,7 @@ class DecodingOptions:
     max_initial_timestamp:Optional[float] = 1.0 
     fp16:bool = False
     log_tensors:bool = False
-    enable_cache:bool = False
+    enable_cache:bool = True
 
 @dataclass(frozen=True)
 class DecodingResult:
