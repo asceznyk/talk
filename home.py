@@ -55,7 +55,7 @@ def main_page():
             options = DecodingOptions(
                 task = request.form['task'], 
                 language = request.form['language'],
-                log_tensors = True
+                log_tensors = True,
                 prompt = None if inp == '' else inp 
             )
             print(f"input options task={options.task}, language={options.language}")
