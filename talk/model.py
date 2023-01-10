@@ -59,17 +59,20 @@ class MultiHeadAttention(nn.Module):
                     print(f"mask.shape = {mask[:n_ctx, :n_ctx].shape}")
 
     def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
-        q = self.query(x)
+        try:
+            q = self.query(x)
+            if kv_cache is None or xa is None or self.key not in kv_cache:
+                inp = x if xa is None else xa 
+                k = self.key(inp)
+                v = self.value(inp)
+            else:
+                k = kv_cache[self.key]
+                v = kv_cache[self.value]
 
-        if kv_cache is None or xa is None or self.key not in kv_cache:
-            inp = x if xa is None else xa 
-            k = self.key(inp)
-            v = self.value(inp)
-        else:
-            k = kv_cache[self.key]
-            v = kv_cache[self.value]
-
-        return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
+            return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
+        except:
+            print(f"x.shape = {x.shape}")
+            if mask is not None: print(f"mask.shape = {mask.shape}")
 
 class ResidualAttentionBlock(nn.Module):
     def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):
@@ -137,12 +140,8 @@ class TextDecoder(nn.Module):
         offset = next(iter(kv_cache.values())).shape[1] if kv_cache else 0
         x = self.token_embedding(x) + self.positional_embedding[offset:offset+x.shape[-1]]
 
-        try:
-            for block in self.blocks:
-                x = block(x, xa, mask=self.mask, kv_cache=kv_cache, log_tensors=log_tensors)
-        except:
-            print(f"block x input.shape={x.shape}")
-            print(f"kv_cache={kv_cache}")
+        for block in self.blocks:
+            x = block(x, xa, mask=self.mask, kv_cache=kv_cache, log_tensors=log_tensors) 
 
         return (self.ln(x) @ torch.transpose(self.token_embedding.weight, 0, 1))
 
