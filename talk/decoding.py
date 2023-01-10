@@ -25,7 +25,7 @@ class Inference:
         self.hooks = []
 
     def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
-        if enable_cache:
+        if self.kv_cache is not None:
             self.kv_cache, self.hooks = self.model.install_cache()
 
         if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
