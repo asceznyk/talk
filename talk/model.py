@@ -83,9 +83,16 @@ class MultiHeadAttention(nn.Module):
                 k = kv_cache[self.key]
                 v = kv_cache[self.value]
 
+            print(f"q.shape = {q.shape}")
+            print(f"k.shape = {k.shape}")
+            print(f"v.shape = {v.shape}")
+            print(f"x.shape = {x.shape}")
+            print(f"xa = {xa}")
+
             return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
         except:
-            print(f"{torch.all(inp == x)}")
+            print(f"inp == x = {torch.all(inp == x)}")
+            print(f"")
             print(f"inp.shape = {inp.shape}")
             with torch.no_grad(): print(f"out.shape = {self.key(inp).shape}")
             print(f"q.shape = {q.shape}")
@@ -93,7 +100,6 @@ class MultiHeadAttention(nn.Module):
             print(f"v.shape = {v.shape}")
             print(f"x.shape = {x.shape}")
             print(f"xa = {xa}")
-            print(f"kv_cache = {kv_cache}")
             if mask is not None: print(f"mask.shape = {mask.shape}")
 
 class ResidualAttentionBlock(nn.Module):

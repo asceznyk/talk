@@ -27,13 +27,12 @@ class Inference:
     def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
         if not self.kv_cache:
             self.kv_cache, self.hooks = self.model.install_cache()
-            print(self.kv_cache)
 
         if tokens.shape[-1] > self.initial_token_length: 
             tokens = tokens[:, -1:]
 
         try:
-            return self.model.decoder(tokens, audio_features, kv_cache=None, log_tensors=log_tensors)
+            return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache, log_tensors=log_tensors)
         except:
             print(f"input tokens: {tokens}") 
 
