@@ -74,6 +74,7 @@ class MultiHeadAttention(nn.Module):
     def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
         try:
             q = self.query(x)
+
             if kv_cache is None or xa is None or self.key not in kv_cache:
                 inp = x if xa is None else xa 
                 k = self.key(inp)
@@ -82,16 +83,9 @@ class MultiHeadAttention(nn.Module):
                 k = kv_cache[self.key]
                 v = kv_cache[self.value]
 
-            print(f"q.shape = {q.shape}")
-            print(f"k.shape = {k.shape}")
-            print(f"v.shape = {v.shape}")
-            print(f"x.shape = {x.shape}")
-            print(f"xa = {xa}")
-
             return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
         except:
             print(f"inp == x = {torch.all(inp == x)}")
-            print(f"")
             print(f"inp.shape = {inp.shape}")
             with torch.no_grad(): print(f"out.shape = {self.key(inp).shape}")
             print(f"q.shape = {q.shape}")

@@ -1,4 +1,3 @@
-const checkpointSelect = document.getElementById("checkpoint");
 const taskSelect = document.getElementById("task");
 const langSelect = document.getElementById("language");
 const audioTag = document.getElementById("player");
@@ -34,22 +33,12 @@ function toggleButtons(disabled) {
 }
 
 async function sendPOST(url, formData) {
-	checkpointSelect.classList.add("disabled");
 	toggleButtons(false);
 	let result = await fetch(url, {method:"POST", body:formData});
 	result = await result.json();
-	checkpointSelect.classList.remove("disabled");
 	toggleButtons(true);
 	console.log(result)
 	return result
-}
-
-async function selectCkpt(e) {
-	statusDiv.innerHTML = `loading checkpoint..`
-	let fd = new FormData();
-	fd.append("checkpoint", e.currentTarget.value);
-	let result = await sendPOST('/checkpoint/', fd);	
-	statusDiv.innerHTML = result.status	
 }
 
 function addLanguages() {
@@ -280,12 +269,6 @@ customAudioPlayer(audioTag);
 liveAudioSpeechRecognition(audioTag);
 
 document.addEventListener("click", closeAllSelect);
-
-checkpointSelect.addEventListener("change", (e) => { 
-	if(!e.currentTarget.classList.contains('disabled')) {
-		selectCkpt(e); 
-	}
-});
 
 
 

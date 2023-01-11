@@ -24,20 +24,8 @@ else:
     app.config["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="talk_user_data_")
 
 allowed_exts = {'wav', 'mp3', 'ogg', 'webm'}
-base_path = "assets/tiny.pt"
+base_path = "assets/base.pt"
 model, _ = load_model(base_path)
-
-@app.route("/checkpoint/", methods=['POST'])
-def get_model():
-    global model
-    del model
-    try:
-        model, status = load_model(f"assets/{request.form.get('checkpoint')}.pt")
-    except:
-        model, _ = load_model(base_path)
-        status = "model loading has failed, loaded tiny model instead"
-
-    return json.dumps({"status":status})
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
@@ -78,6 +66,6 @@ def main_page():
         return render_template('main.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
+    app.run(threaded=True, debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
 
 
