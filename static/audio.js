@@ -234,9 +234,8 @@ function liveAudioSpeechRecognition(audio) {
 
 					mediaRecorder.start();
 
-					let result = await sendPOST("/", fd);
-
 					let timestamp = Date.now(); 
+					let result = await sendPOST("/", fd);
 					let text = result.text;
 					if(!text.includes('err_msg')) {
 						allTexts.push({"timestamp":timestamp, "text":text});

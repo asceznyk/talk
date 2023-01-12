@@ -24,10 +24,9 @@ RUN apt-get install -y git
 RUN mkdir assets
 
 ENV PORT=5000
-
 EXPOSE 5000
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["./mount.sh"] 
+ENTRYPOINT ["./serve.sh"] 
 
