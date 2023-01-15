@@ -25,7 +25,6 @@ else:
 
 allowed_exts = {'wav', 'mp3', 'ogg', 'webm'}
 base_path = "assets/base.pt"
-model, _ = load_model(base_path)
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
@@ -36,6 +35,7 @@ def main_page():
         if request.method == 'POST':
             language = "en"
             file = request.files['audio']
+            model, _ = load_model(base_path)
             if file and allowed_file(file.filename): 
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
                 file.save(to_annotate)
@@ -60,13 +60,15 @@ def main_page():
                 text, language = result.text, result.language
                 print(text, language)
             else:
-                text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}" 
+                text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
+            del model
             return json.dumps({"text":text, "language":language})
         else:
             return render_template('main.html')
     except:
         print(traceback.format_exc())
         print(f"pid: {os.getpid()}, for file:{to_annotate}")
+        del model
         return json.dumps({"text":"__traceback__error__"})
 
 if __name__ == '__main__':
