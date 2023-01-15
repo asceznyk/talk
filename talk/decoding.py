@@ -182,7 +182,7 @@ class DecodingOptions:
     language:Optional[str] = None # language that the audio is in; uses detected language if None
 
     # sampling-related options
-    temperature:float = 0.0
+    temperature:float = 0.2
     sample_len:Optional[int] = None # maximum number of tokens to sample
     best_of:Optional[int] = None # number of independent samples to collect, when t > 0
     beam_size:Optional[int] = None # number of beams in beam search, when t == 0
