@@ -28,11 +28,11 @@ class Inference:
         if not self.kv_cache:
             self.kv_cache, self.hooks = self.model.install_cache()
 
-        if tokens.shape[-1] > self.initial_token_length: 
-            tokens = tokens[:, -1:]
+        #if tokens.shape[-1] > self.initial_token_length: 
+        #    tokens = tokens[:, -1:]
 
         try:
-            return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache, log_tensors=log_tensors)
+            return self.model.decoder(tokens, audio_features, kv_cache=None, log_tensors=log_tensors)
         except:
             print(f"input tokens: {tokens}") 
 
@@ -350,7 +350,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
         assert audio_features.shape[0] == len(no_speech_probs) == n_audio
 
         tokens = tokens.reshape(n_audio, n_group, -1)
-        sum_logprobs = sum_logprobs.reshape(n_audio, n_group)
+        sum_logprobs = Sum_logprobs.reshape(n_audio, n_group)
         tokens, sum_logprobs = decoder.finalize(tokens, sum_logprobs)
 
         tokens:List[List[Tensor]] = [
