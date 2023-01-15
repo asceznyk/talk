@@ -22,7 +22,7 @@ class Inference:
         self.kv_cache = {} if enable_cache else None
         self.hooks = []
 
-    def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
+    def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False, i:int=0) -> Tensor:
         if self.kv_cache is not None:
             if not self.kv_cache:
                 self.kv_cache, self.hooks = self.model.install_cache()
@@ -36,8 +36,8 @@ class Inference:
                 log_tensors=log_tensors
             )
         except:
+            print(f"in loop: {i}")
             print(f"address of Inference kv_cache: {id(self.kv_cache)}")
-            print(self.kv_cache)
             print([(v, v.shape) for k, v in self.kv_cache.items()])
 
     def cleanup_caching(self):
@@ -311,7 +311,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         try:
             for i in range(sample_len):
-                logits = inference.logits(tokens, audio_features, options.log_tensors)
+                logits = inference.logits(tokens, audio_features, options.log_tensors, i)
 
                 if i == 0 and tokenizer.no_speech is not None:
                     probs_at_sot = logits[:, sot_index].float().softmax(dim=-1)

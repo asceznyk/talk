@@ -89,7 +89,6 @@ class MultiHeadAttention(nn.Module):
             print(f"v.shape = {v.shape}")
             print(f"x.shape = {x.shape}")
             print(f"xa = {xa}")
-            print(f"address of model kv_cache :{id(kv_cache)}")
 
 class ResidualAttentionBlock(nn.Module):
     def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):
