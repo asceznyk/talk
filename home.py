@@ -66,7 +66,7 @@ def main_page():
             return render_template('main.html')
     except:
         print(f"pid: {os.getpid()}, for file:{to_annotate}")
-        json.dumps({"text":"post request failed!"})
+        return json.dumps({"text":"post request failed!"})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
