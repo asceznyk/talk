@@ -20,6 +20,7 @@ class Inference:
         self.model: "Whisper" = model
         self.initial_token_length = initial_token_length
         self.kv_cache = {} if enable_cache else None
+        print(f"address for self.kv_cache: {id(self.kv_cache)}")
         self.hooks = []
 
     def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
