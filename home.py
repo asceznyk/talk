@@ -34,6 +34,7 @@ def main_page():
 
     try:
         if request.method == 'POST':
+            language = "en"
             file = request.files['audio']
             if file and allowed_file(file.filename): 
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
@@ -59,13 +60,12 @@ def main_page():
                 text, language = result.text, result.language
                 print(text, language)
             else:
-                text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
+                text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}" 
+            return json.dumps({"text":text, "language":language})
+        else:
+            return render_template('main.html')
     except:
-        print(f"processor id:{os.getpid()} for file:{to_annotate}")
-
-        return json.dumps({"text":text, "language":language})
-    else:
-        return render_template('main.html')
+        print(f"pid: {os.getpid()}, for file:{to_annotate}")
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', ssl_context='adhoc', port=os.environ.get('PORT', 5000))
