@@ -65,6 +65,7 @@ def main_page():
         else:
             return render_template('main.html')
     except:
+        print(traceback.format_exc())
         print(f"pid: {os.getpid()}, for file:{to_annotate}")
         return json.dumps({"text":"post request failed!"})
 
