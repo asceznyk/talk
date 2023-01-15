@@ -23,14 +23,14 @@ class Inference:
         self.hooks = []
 
     def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
-        '''if not self.kv_cache:
+        if not self.kv_cache:
             self.kv_cache, self.hooks = self.model.install_cache()
 
         if tokens.shape[-1] > self.initial_token_length: 
-            tokens = tokens[:, -1:]'''
+            tokens = tokens[:, -1:]
 
         try:
-            return self.model.decoder(tokens, audio_features, kv_cache=None, log_tensors=log_tensors)
+            return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache, log_tensors=log_tensors)
         except:
             print(f"input tokens: {tokens}") 
 
@@ -182,7 +182,7 @@ class DecodingOptions:
     language:Optional[str] = None # language that the audio is in; uses detected language if None
 
     # sampling-related options
-    temperature:float = 0.2
+    temperature:float = 0.0
     sample_len:Optional[int] = None # maximum number of tokens to sample
     best_of:Optional[int] = None # number of independent samples to collect, when t > 0
     beam_size:Optional[int] = None # number of beams in beam search, when t == 0
