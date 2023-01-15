@@ -348,7 +348,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
         assert audio_features.shape[0] == len(no_speech_probs) == n_audio
 
         tokens = tokens.reshape(n_audio, n_group, -1)
-        sum_logprobs = Sum_logprobs.reshape(n_audio, n_group)
+        sum_logprobs = sum_logprobs.reshape(n_audio, n_group)
         tokens, sum_logprobs = decoder.finalize(tokens, sum_logprobs)
 
         tokens:List[List[Tensor]] = [
