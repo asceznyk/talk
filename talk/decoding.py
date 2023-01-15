@@ -38,7 +38,7 @@ class Inference:
         except:
             print(f"address of Inference kv_cache: {id(self.kv_cache)}")
             print(self.kv_cache)
-            print(self.kv_cache.shape)
+            print([(v, v.shape) for k, v in self.kv_cache.items()])
 
     def cleanup_caching(self):
         for hook in self.hooks:
