@@ -32,7 +32,7 @@ class Inference:
             return self.model.decoder(
                 tokens, 
                 audio_features, 
-                kv_cache=None, 
+                kv_cache=self.kv_cache, 
                 log_tensors=log_tensors
             )
         except:
