@@ -65,10 +65,7 @@ class MultiHeadAttention(nn.Module):
         v = v.view(*v.shape[:2], self.n_head, -1).permute(0, 2, 1, 3)
 
         qk = q @ k
-        if mask is not None:
-            print(f"qk.shape = {qk.shape}")
-            print(f"mask.shape = {mask[:n_ctx, :n_ctx].shape}")
-            qk += mask[:n_ctx, :n_ctx]
+        if mask is not None: qk += mask[:n_ctx, :n_ctx]
         return (F.softmax(qk.float(), dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2) 
 
     def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
@@ -87,7 +84,6 @@ class MultiHeadAttention(nn.Module):
         except:
             print(f"inp == x = {torch.all(inp == x)}")
             print(f"inp.shape = {inp.shape}")
-            with torch.no_grad(): print(f"out.shape = {self.key(inp).shape}")
             print(f"q.shape = {q.shape}")
             print(f"k.shape = {k.shape}")
             print(f"v.shape = {v.shape}")

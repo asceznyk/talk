@@ -33,11 +33,11 @@ def main_page():
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_exts
 
     if request.method == 'POST':
-        language = "en"
         file = request.files['audio']
         if file and allowed_file(file.filename): 
             to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
             file.save(to_annotate)
+            print(f"processor pid: {os.getpid()} for file: {to_annotate}")
 
             options = DecodingOptions(
                 task = request.form['task'], 
