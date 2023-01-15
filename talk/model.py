@@ -83,13 +83,14 @@ class MultiHeadAttention(nn.Module):
 
             return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
         except:
-            print(f"address for kv_cache :{id(kv_cache)}")
+            #print(f"address for kv_cache :{id(kv_cache)}")
             print(f"inp == x = {torch.all(inp == x)}")
             print(f"q.shape = {q.shape}")
             print(f"k.shape = {k.shape}")
             print(f"v.shape = {v.shape}")
             print(f"x.shape = {x.shape}")
             print(f"xa = {xa}")
+            print(f"kv_cache = {kv_cache}")
 
 class ResidualAttentionBlock(nn.Module):
     def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):

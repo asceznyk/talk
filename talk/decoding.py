@@ -20,20 +20,21 @@ class Inference:
         self.model: "Whisper" = model
         self.initial_token_length = initial_token_length
         self.kv_cache = {} if enable_cache else None
-        print(f"address for self.kv_cache: {id(self.kv_cache)}")
+        #print(f"address for self.kv_cache: {id(self.kv_cache)}")
         self.hooks = []
 
     def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
-        if not self.kv_cache:
-            self.kv_cache, self.hooks = self.model.install_cache()
+        if self.kv_cache is not None:
+            if not self.kv_cache:
+                self.kv_cache, self.hooks = self.model.install_cache()
+            if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
 
-        if tokens.shape[-1] > self.initial_token_length: 
-            tokens = tokens[:, -1:]
-
-        try:
-            return self.model.decoder(tokens, audio_features, kv_cache=self.kv_cache, log_tensors=log_tensors)
-        except:
-            print(f"input tokens: {tokens}") 
+        return self.model.decoder(
+            tokens, 
+            audio_features, 
+            kv_cache=None, 
+            log_tensors=log_tensors
+        )
 
     def cleanup_caching(self):
         for hook in self.hooks:
@@ -202,7 +203,7 @@ class DecodingOptions:
     max_initial_timestamp:Optional[float] = 1.0 
     fp16:bool = False
     log_tensors:bool = False
-    enable_cache:bool = True
+    enable_cache:bool = False
 
 @dataclass(frozen=True)
 class DecodingResult:
