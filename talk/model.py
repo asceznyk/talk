@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 from dataclasses import dataclass
@@ -83,13 +84,11 @@ class MultiHeadAttention(nn.Module):
             return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
         except:
             print(f"inp == x = {torch.all(inp == x)}")
-            print(f"inp.shape = {inp.shape}")
             print(f"q.shape = {q.shape}")
             print(f"k.shape = {k.shape}")
             print(f"v.shape = {v.shape}")
             print(f"x.shape = {x.shape}")
             print(f"xa = {xa}")
-            if mask is not None: print(f"mask.shape = {mask.shape}")
 
 class ResidualAttentionBlock(nn.Module):
     def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):
