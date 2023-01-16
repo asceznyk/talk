@@ -307,7 +307,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
         try:
             for i in range(sample_len):
-                logits = inference.logits(tokens, audio_features, options.log_tensors, i)
+                logits = inference.logits(tokens, audio_features, options.log_tensors)
 
                 if i == 0 and tokenizer.no_speech is not None:
                     probs_at_sot = logits[:, sot_index].float().softmax(dim=-1)
