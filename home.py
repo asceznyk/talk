@@ -11,7 +11,7 @@ from flask import Flask, flash, render_template, request
 from pydub import AudioSegment
 from scipy.io import wavfile
 
-from talk import load_model, log_mel_spec, pad_or_trim, DecodingOptions
+from talk import load_model, log_mel_spec, pad_or_trim, decode, DecodingOptions
 
 app = Flask(__name__)
 
@@ -25,6 +25,7 @@ else:
 
 allowed_exts = {'wav', 'mp3', 'ogg', 'webm'}
 base_path = "assets/base.pt"
+model, _ = load_model(base_path)
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
@@ -35,7 +36,6 @@ def main_page():
         if request.method == 'POST':
             language = "en"
             file = request.files['audio']
-            model, _ = load_model(base_path)
             if file and allowed_file(file.filename): 
                 to_annotate = os.path.join(app.config["UPLOAD_DIR"], file.filename)
                 file.save(to_annotate)
@@ -56,12 +56,11 @@ def main_page():
                 mel = pad_or_trim(mel, length=2*model.dims.n_audio_ctx) 
 
                 print(f"input audio shape: {mel.shape}")
-                result = model.decode(mel, options)
+                result = decode(model, mel, options)
                 text, language = result.text, result.language
                 print(text, language)
             else:
                 text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
-            del model
             return json.dumps({"text":text, "language":language})
         else:
             return render_template('main.html')

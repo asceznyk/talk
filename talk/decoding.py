@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 
 from dataclasses import dataclass, field
@@ -22,23 +23,18 @@ class Inference:
         self.kv_cache = {} if enable_cache else None
         self.hooks = []
 
-    def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False, i:int=-1) -> Tensor:
+    def logits(self, tokens:Tensor, audio_features:Tensor, log_tensors:bool=False) -> Tensor:
         if self.kv_cache is not None:
             if not self.kv_cache:
                 self.kv_cache, self.hooks = self.model.install_cache()
             if tokens.shape[-1] > self.initial_token_length: tokens = tokens[:, -1:]
 
-        try:
-            return self.model.decoder(
-                tokens, 
-                audio_features, 
-                kv_cache=self.kv_cache, 
-                log_tensors=log_tensors
-            )
-        except:
-            print(f"in loop: {i}")
-            print(f"address of Inference kv_cache: {id(self.kv_cache)}")
-            print([(v, v.shape) for k, v in self.kv_cache.items()])
+        return self.model.decoder(
+            tokens, 
+            audio_features, 
+            kv_cache=self.kv_cache, 
+            log_tensors=log_tensors
+        )
 
     def cleanup_caching(self):
         for hook in self.hooks:
@@ -296,7 +292,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
         lang_probs = None
 
         if options.task == "lang_id" or options.language is None:
-            lang_tokens, lang_probs = model.detect_language(audio_features, tokenizer)
+            lang_tokens, lang_probs = detect_language(model, audio_features, tokenizer)
             languages = [max(p, key=p.get) for p in lang_probs]
             if options.language is None:
                 tokens[:, sot_index + 1] = lang_tokens
@@ -390,6 +386,8 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
     assert verify_options()
 
+    model = copy.deepcopy(model)
+
     language = options.language or "en"
     tokenizer:Tokenizer = get_tokenizer(model.is_multilingual, language=language, task=options.task)
     n_group:int = options.beam_size or options.best_of or 1
@@ -431,6 +429,7 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     result = run(mel)
     if single: result = result[0]
 
+    del model
     return result 
 
 

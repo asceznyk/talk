@@ -69,8 +69,7 @@ class MultiHeadAttention(nn.Module):
         if mask is not None: qk += mask[:n_ctx, :n_ctx]
         return (F.softmax(qk.float(), dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2) 
 
-    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False):
-        try:
+    def forward(self, x:Tensor, xa:Optional[Tensor]=None, mask:Optional[Tensor]=None, kv_cache:Optional[dict]=None, log_tensors:bool=False): 
             q = self.query(x)
 
             if kv_cache is None or xa is None or self.key not in kv_cache:
@@ -82,13 +81,6 @@ class MultiHeadAttention(nn.Module):
                 v = kv_cache[self.value]
 
             return self.out(self.qkv_attention(q, k, v, mask, log_tensors=log_tensors))
-        except:
-            print(f"inp == x = {torch.all(inp == x)}")
-            print(f"q.shape = {q.shape}")
-            print(f"k.shape = {k.shape}")
-            print(f"v.shape = {v.shape}")
-            print(f"x.shape = {x.shape}")
-            print(f"xa = {xa}")
 
 class ResidualAttentionBlock(nn.Module):
     def __init__(self, n_state:int, n_head:int, cross_attention:bool=False):
@@ -214,9 +206,6 @@ class Talk(nn.Module):
 
         self.decoder.apply(install_hooks)
         return cache, hooks
-
-    detect_language = detect_language_function
-    decode = decode_function
 
 
 
