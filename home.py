@@ -67,7 +67,6 @@ def main_page():
     except:
         print(traceback.format_exc())
         print(f"pid: {os.getpid()}, for file:{to_annotate}")
-        del model
         return json.dumps({"text":"__traceback__error__"})
 
 if __name__ == '__main__':
