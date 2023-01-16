@@ -61,14 +61,13 @@ def main_page():
                 print(text, language)
             else:
                 text = f"incorrect file format, allowed exts {str(allowed_exts)[1:-1]}"
-            #del model
+            del mel, webm
             return json.dumps({"text":text, "language":language})
         else:
             return render_template('main.html')
     except:
         print(traceback.format_exc())
         print(f"pid: {os.getpid()}, for file:{to_annotate}")
-        #del model
         return json.dumps({"text":"__traceback__error__"})
 
 if __name__ == '__main__':

@@ -28,6 +28,11 @@ html, body {
 	margin: auto;
 	border-radius: 5px;
 }
+
+.audio-player .play-container, .audio-player .volume-container {
+	width:15%;
+}
+
 .audio-player .timeline .progress {
 	background: #E9C46A;
 	width: 0%;
@@ -61,13 +66,13 @@ html, body {
 	left: 0;
 	height: 0;
 	width: 0;
-	border: 5px solid transparent;
-	border-left: 10px solid white;
+	border: 10px solid transparent;
+	border-left: 20px solid white;
 }
 
 .audio-player .controls .toggle-play.pause {
-	height: 10px;
-	width: 15px;
+	height: 20px;
+	width: 20px;
 	cursor: pointer;
 	position: relative;
 }
@@ -77,8 +82,8 @@ html, body {
 	left: 0px;
 	background: white;
 	content: "";
-	height: 10px;
-	width: 2px;
+	height: 20px;
+	width: 3px;
 }
 
 .audio-player .controls .toggle-play.pause:after {
@@ -87,8 +92,8 @@ html, body {
 	right: 8px;
 	background: white;
 	content: "";
-	height: 10px;
-	width: 2px;
+	height: 20px;
+	width: 3px;
 }
 
 .audio-player .controls .time {
@@ -108,9 +113,12 @@ html, body {
 }
 
 .audio-player .controls .volume-container .volume-button {
-	height: 26px;
 	display: flex;
 	align-items: center;
+}
+
+.audio-player .controls .volume-container .volume-button .volume {
+	font-size:26px;
 }
 
 .audio-player .controls .volume-container .volume-slider {
@@ -225,8 +233,8 @@ html, body {
 
 .inpaudio, .transcript, .task {
 	border-radius:5px;
-	width:-webkit-fill-available;	
-	padding: 5px;
+	width:-webkit-fill-available;
+	padding: 10px;
 	display:block;
 	border: 1px solid;
 	background:#264653;
@@ -298,6 +306,7 @@ html, body {
 		width: 90vw;	
 	}
 }
+
 
 
 
