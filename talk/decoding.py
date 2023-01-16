@@ -386,8 +386,6 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
 
     assert verify_options()
 
-    model = copy.deepcopy(model)
-
     language = options.language or "en"
     tokenizer:Tokenizer = get_tokenizer(model.is_multilingual, language=language, task=options.task)
     n_group:int = options.beam_size or options.best_of or 1
@@ -429,7 +427,6 @@ def decode(model:"Whisper", mel:Tensor, options:DecodingOptions = DecodingOption
     result = run(mel)
     if single: result = result[0]
 
-    del model
     return result 
 
 
